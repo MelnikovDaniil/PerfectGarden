@@ -1,0 +1,116 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1593963111356126262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6764417438173741260}
+  - component: {fileID: 8329998472363714520}
+  - component: {fileID: 2970702343899541569}
+  - component: {fileID: 8538801085605082280}
+  - component: {fileID: 3604842991790299363}
+  - component: {fileID: 365809751439157945}
+  m_Layer: 0
+  m_Name: CareManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6764417438173741260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593963111356126262}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.16661727, y: -3.1514978, z: 0.034745704}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8329998472363714520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593963111356126262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 630a4793a52d618429303e9f89a86e3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stateInfos:
+  - {fileID: 11400000, guid: ffdd50d3e7fb5eb42a9493042ec93221, type: 2}
+  - {fileID: 11400000, guid: 4e4b08d96a723854fb1d5b1fb9cd5bb3, type: 2}
+  CareCanvas: {fileID: 0}
+  finishPlantingCanvas: {fileID: 0}
+  careEventStageAmount: 3
+--- !u!114 &2970702343899541569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593963111356126262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bd73ce54e314c2489e29a7728851d56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waterignAnimator: {fileID: 0}
+  wateringCan: {fileID: 0}
+  potTransformParent: {fileID: 0}
+--- !u!114 &8538801085605082280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593963111356126262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ee9e3e83018c0489cbf786fffd05c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swipeThreshold: 200
+  strickPrefab: {fileID: 6177925855811162075, guid: 8c7ea9a25c75c154c80e48e87408a780,
+    type: 3}
+  stickStartPosition: {x: 0, y: 3}
+--- !u!114 &3604842991790299363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593963111356126262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9402e6bac6a3cfd4b9e7082a8becbd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spraysAmount: 4
+  sprayDistanceRange: {x: 1, y: 2}
+  sprayAnimatorPrefab: {fileID: 5727089016692838666, guid: 2bb90405aefef53488b01ebcc261d512,
+    type: 3}
+--- !u!114 &365809751439157945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593963111356126262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a91b92a289b674c409d74065ec08b79d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pullThreshold: 1

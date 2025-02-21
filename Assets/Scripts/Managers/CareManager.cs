@@ -1,0 +1,182 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+public class CareManager : MonoBehaviour
+{
+    public static event Action<PotWithPlant> OnCareFinished;
+
+    public static CareManager Instance;
+
+    public static bool CareInProcess;
+
+    public List<ScriptableCareStateInfo> stateInfos;
+
+    [SerializeField] private CareMenu CareCanvas;
+    [SerializeField] private FinishPlanting finishPlantingCanvas;
+
+    public Transform carePlace;
+    public Transform plantPlace;
+
+    private CancellationTokenSource eventCancellationSource;
+
+    private PotWithPlant currentPlant;
+
+    private List<CareEventHandler> careEventHandlers;
+
+    private void Awake()
+    {
+        Instance = this;
+        careEventHandlers = GetComponents<CareEventHandler>().ToList();
+    }
+
+    public int careEventStageAmount = 3;
+
+    public void GenerateCare(List<PotWithPlant> potWithPlants)
+    {
+        // Добавить время последнего обновление стадий ухода
+        foreach (var potWithPlant in potWithPlants.Where(x => !x.IsRotten))
+        {
+            if (DateTime.UtcNow.Date - potWithPlant.lastCareTime.Date >= TimeSpan.FromDays(1)
+                && DateTime.UtcNow.Date - potWithPlant.lastStatusUpdate.Date >= TimeSpan.FromDays(1))
+            {
+                var plantStage = potWithPlant.plantInfo.growStages[potWithPlant.currentStage];
+
+                var newEvents = plantStage.requiredEvents.Where(x => !potWithPlant.waitingCareEvents.Contains(x)).ToList();
+                var numberOfEventsLeft = Mathf.Clamp(careEventStageAmount - newEvents.Count, 0, careEventStageAmount);
+
+                newEvents.AddRange(TakeRandomOptionalEvent(plantStage.optionalEvents, numberOfEventsLeft));
+                potWithPlant.waitingCareEvents.AddRange(newEvents);
+                potWithPlant.waitingCareEvents = potWithPlant.waitingCareEvents.Distinct().ToList();
+                potWithPlant.lastStatusUpdate = DateTime.UtcNow;
+            }
+
+            potWithPlant.waitingCareEvents.ForEach(careEvent =>
+            {
+                stateInfos.FirstOrDefault(stateInfo => stateInfo.EvenName == careEvent)?.Apply(potWithPlant);
+            });
+        }
+    }
+
+    private IEnumerable<CareEvent> TakeRandomOptionalEvent(List<OptionalCareEvent> careEvents, int amount)
+    {
+        if (careEvents == null)
+        {
+            throw new ArgumentNullException(nameof(careEvents));
+        }
+
+        var elements = careEvents.ToList();
+
+        var result = new List<CareEvent>();
+        var totalWeight = elements.Sum(e => e.chance);
+
+        for (var i = 0; i < amount; i++)
+        {
+            var randomNumber = Random.Range(0, totalWeight);
+            var selected = elements.FirstOrDefault(element =>
+            {
+                randomNumber -= element.chance;
+                return randomNumber < 0;
+            });
+
+            result.Add(selected.careEvent);
+        }
+
+        return result;
+    }
+
+    public async Task MoveToTrash()
+    {
+        currentPlant.gameObject.SetActive(false);
+        await Task.Delay(2000);
+        FinishCare();
+    }
+
+    public async Task PurchaseAsync()
+    {
+        currentPlant.gameObject.SetActive(false);
+        await Task.Delay(2000);
+        MoneyMapper.Money += currentPlant.plantInfo.plantPrice;
+        FinishCare();
+    }
+
+
+    public async Task OpenCareMenu(PotWithPlant potWithPlant)
+    {
+        CareInProcess = true;
+        currentPlant = potWithPlant;
+
+        SetupPlant(currentPlant);
+
+        CareCanvas.ShowMenu(currentPlant);
+        CareCanvas.OnBackPressed = FinishCare;
+
+        finishPlantingCanvas.finishPlantingButton.onClick.RemoveAllListeners();
+        finishPlantingCanvas.finishPlantingButton.onClick.AddListener(() =>
+        {
+            OnCareFinished?.Invoke(potWithPlant);
+            finishPlantingCanvas.HideMenu();
+        });
+    }
+
+    public async Task StartCareAsync(CareEvent eventName)
+    {
+        eventCancellationSource = new CancellationTokenSource();
+
+        CareCanvas.HideCareButtons();
+        CareCanvas.OnBackPressed = () =>
+        {
+            eventCancellationSource?.Cancel();
+        };
+
+        var eventHandler = careEventHandlers.First(x => x.EventName == eventName);
+        var careContext = new CareContext
+        {
+            CarePlace = carePlace,
+            PotWithPlant = currentPlant
+        };
+
+        eventHandler.Setup(careContext);
+        await eventHandler.PrepareAsync(eventCancellationSource.Token);
+        await eventHandler.StartAsync(eventCancellationSource.Token);
+        eventHandler.Clear();
+
+        if (eventHandler.Status == HandlingStatus.Finished)
+        {
+            stateInfos.FirstOrDefault(stateInfo => stateInfo.EvenName == eventName)?.Complete(currentPlant);
+            currentPlant.waitingCareEvents.Remove(eventName);
+
+            if (!currentPlant.waitingCareEvents.Any())
+            {
+                currentPlant.UpdateCareTime();
+                currentPlant.SetStage(++currentPlant.currentStage);
+            }
+        }
+
+        SetupPlant(currentPlant);
+
+        CareCanvas.ShowMenu(currentPlant);
+        CareCanvas.OnBackPressed = FinishCare;
+    }
+
+    private void FinishCare()
+    {
+        CareCanvas.HideMenu();
+        OnCareFinished?.Invoke(currentPlant);
+        CareInProcess = false;
+        currentPlant.transform.parent = null;
+        currentPlant = null;
+    }
+
+    private void SetupPlant(PotWithPlant potWithPlant)
+    {
+        potWithPlant.transform.parent = plantPlace;
+        potWithPlant.transform.localScale = Vector3.one;
+        potWithPlant.transform.localPosition = Vector3.zero;
+        potWithPlant.gameObject.SetActive(true);
+    }
+}

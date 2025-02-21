@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 104f062b76d7d384d81d4369b1df137d, type: 3}
+  m_Name: Grass
+  m_EditorClassIdentifier: 
+  name: Grass
+  plantType: 0
+  growStages:
+  - stagePlantSprite: {fileID: 2023349904, guid: 340f4dfaf1b3ec5478e7f301e68c9556,
+      type: 3}
+  - stagePlantSprite: {fileID: 1957408841, guid: 340f4dfaf1b3ec5478e7f301e68c9556,
+      type: 3}
+  - stagePlantSprite: {fileID: -159018656, guid: 340f4dfaf1b3ec5478e7f301e68c9556,
+      type: 3}
+  seedSprite: {fileID: 0}
+  packageSprite: {fileID: 0}
+  shopSprite: {fileID: 1957408841, guid: 340f4dfaf1b3ec5478e7f301e68c9556, type: 3}
+  seedPrice: 30
