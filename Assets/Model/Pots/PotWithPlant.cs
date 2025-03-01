@@ -24,7 +24,6 @@ public class PotWithPlant : MonoBehaviour
     [NonSerialized] public Renderer plantRenderer;
     [NonSerialized] public PotDirtFilling potDirtFilling;
     [NonSerialized] public PotWatering potWatering;
-    [NonSerialized] public PlantStatus plantStatus;
 
     [NonSerialized] public PlantInfo plantInfo;
     [NonSerialized] public PotInfo potInfo;
@@ -56,7 +55,6 @@ public class PotWithPlant : MonoBehaviour
         careStates = new List<CareState>();
         potDirtFilling = GetComponent<PotDirtFilling>();
         potWatering = GetComponent<PotWatering>();
-        plantStatus = GetComponent<PlantStatus>();
     }
 
     public void SetStage(int plantStage)
