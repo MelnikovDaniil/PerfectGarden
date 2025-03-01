@@ -14,13 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Grass
   plantType: 0
+  plantingEvents: 
   growStages:
-  - stagePlantSprite: {fileID: 2023349904, guid: 340f4dfaf1b3ec5478e7f301e68c9556,
-      type: 3}
-  - stagePlantSprite: {fileID: 1957408841, guid: 340f4dfaf1b3ec5478e7f301e68c9556,
-      type: 3}
-  - stagePlantSprite: {fileID: -159018656, guid: 340f4dfaf1b3ec5478e7f301e68c9556,
-      type: 3}
+  - stagePlant: {fileID: 0}
+    requiredEvents: 
+    optionalEvents: []
+  - stagePlant: {fileID: 0}
+    requiredEvents: 
+    optionalEvents: []
+  - stagePlant: {fileID: 0}
+    requiredEvents: 
+    optionalEvents: []
+  rottenStage: {fileID: 0}
   seedSprite: {fileID: 0}
   packageSprite: {fileID: 0}
   shopSprite: {fileID: 1957408841, guid: 340f4dfaf1b3ec5478e7f301e68c9556, type: 3}

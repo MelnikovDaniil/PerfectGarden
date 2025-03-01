@@ -35,7 +35,7 @@ public class CareMenu : MonoBehaviour
         BackButton.gameObject.SetActive(true);
         HideCareButtons();
 
-        if (plant.IsRotten)
+        if (plant.IsShouldBeRotted)
         {
             trashButton.gameObject.SetActive(true);
             trashButton.onClick.AddListener(async () =>
@@ -44,7 +44,7 @@ public class CareMenu : MonoBehaviour
                 await CareManager.Instance.MoveToTrash();
             });
         }
-        else if (!plant.IsLastStage())
+        else if (!plant.IsLastStage)
         {
             var buttonsToEnable = careButtons.Where(x => plant.waitingCareEvents.Contains(x.eventName));
             foreach (var careButton in buttonsToEnable)

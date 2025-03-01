@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PotWithPlant : MonoBehaviour
@@ -7,20 +8,32 @@ public class PotWithPlant : MonoBehaviour
     public event Action OnSeedPlant;
 
     public Collider dirtCollider;
-    public bool IsRotten => DateTime.UtcNow.Date - lastCareTime.Date >= TimeSpan.FromDays(3);
+
+    public bool IsDied;
+    public bool IsLastStage => plantInfo.growStages.Count == currentStage + 1;
+    public bool IsShouldBeRotted => DateTime.UtcNow.Date - lastStageChangeTime.Date >= TimeSpan.FromDays(3);
+
+    /// <summary>
+    /// If plant was upgraded to new stage it will wait for timeBetweenStages to add new care events
+    /// If plant was upgraded to new stage, has care and waiting for a one day, it will take more care events
+    /// </summary>
+    public bool IsNewCare => DateTime.UtcNow - lastStageChangeTime >= plantInfo.timeBetweenStages
+                && (!waitingCareEvents.Any() && DateTime.UtcNow - lastCareAddedTime >= plantInfo.timeBetweenStages)
+                    || (waitingCareEvents.Any() && DateTime.UtcNow - lastCareAddedTime >= TimeSpan.FromDays(1));
 
     [NonSerialized] public Renderer plantRenderer;
     [NonSerialized] public PotDirtFilling potDirtFilling;
     [NonSerialized] public PotWatering potWatering;
+    [NonSerialized] public PlantStatus plantStatus;
 
     [NonSerialized] public PlantInfo plantInfo;
     [NonSerialized] public PotInfo potInfo;
 
     // To see days before death: if Now - lastStatusUpdate > 3
-    [NonSerialized] public DateTime lastCareTime;
+    [NonSerialized] public DateTime lastStageChangeTime;
 
     // To see, when new careEvents added time
-    [NonSerialized] public DateTime lastStatusUpdate;
+    [NonSerialized] public DateTime lastCareAddedTime;
     [NonSerialized] public Vector3 cell;
 
     /*[NonSerialized] */public List<CareEvent> waitingCareEvents = new List<CareEvent>();
@@ -43,11 +56,7 @@ public class PotWithPlant : MonoBehaviour
         careStates = new List<CareState>();
         potDirtFilling = GetComponent<PotDirtFilling>();
         potWatering = GetComponent<PotWatering>();
-    }
-
-    public bool IsLastStage()
-    {
-        return plantInfo.growStages.Count == currentStage + 1;
+        plantStatus = GetComponent<PlantStatus>();
     }
 
     public void SetStage(int plantStage)
@@ -63,6 +72,8 @@ public class PotWithPlant : MonoBehaviour
 
     public void Rot()
     {
+        IsDied = true;
+        CompleteAllStates();
         plantPlace.gameObject.SetActive(true);
         foreach (Transform flower in plantPlace)
         {
@@ -71,9 +82,9 @@ public class PotWithPlant : MonoBehaviour
         plantRenderer = Instantiate(plantInfo.rottenStage, plantPlace.transform);
     }
 
-    public void UpdateCareTime()
+    public void UpdateStageChangeTime()
     {
-        lastCareTime = DateTime.UtcNow;
+        lastStageChangeTime = DateTime.UtcNow;
     }
 
     public void AddCareState(CareState state)
@@ -102,6 +113,12 @@ public class PotWithPlant : MonoBehaviour
         var state = careStates.Find(x => x.eventName == careEvent);
         state.Complete(this);
         careStates.Remove(state);
+    }
+
+    public void CompleteAllStates()
+    {
+        careStates.ForEach(x => x.Complete(this));
+        careStates.Clear();
     }
 
     private void OnTriggerEnter(Collider collision)

@@ -17,7 +17,6 @@ public class CareManager : MonoBehaviour
     public List<ScriptableCareStateInfo> stateInfos;
 
     [SerializeField] private CareMenu CareCanvas;
-    [SerializeField] private FinishPlanting finishPlantingCanvas;
 
     public Transform carePlace;
     public Transform plantPlace;
@@ -39,26 +38,33 @@ public class CareManager : MonoBehaviour
     public void GenerateCare(List<PotWithPlant> potWithPlants)
     {
         // Добавить время последнего обновление стадий ухода
-        foreach (var potWithPlant in potWithPlants.Where(x => !x.IsRotten))
+        foreach (var potWithPlant in potWithPlants.Where(x => !x.IsDied))
         {
-            if (DateTime.UtcNow.Date - potWithPlant.lastCareTime.Date >= TimeSpan.FromDays(1)
-                && DateTime.UtcNow.Date - potWithPlant.lastStatusUpdate.Date >= TimeSpan.FromDays(1))
+            if (!potWithPlant.IsShouldBeRotted)
             {
-                var plantStage = potWithPlant.plantInfo.growStages[potWithPlant.currentStage];
+                if (potWithPlant.IsNewCare && !potWithPlant.IsLastStage)
+                {
+                    var plantStage = potWithPlant.plantInfo.growStages[potWithPlant.currentStage];
 
-                var newEvents = plantStage.requiredEvents.Where(x => !potWithPlant.waitingCareEvents.Contains(x)).ToList();
-                var numberOfEventsLeft = Mathf.Clamp(careEventStageAmount - newEvents.Count, 0, careEventStageAmount);
+                    var newEvents = plantStage.requiredEvents.Where(x => !potWithPlant.waitingCareEvents.Contains(x)).ToList();
+                    var numberOfEventsLeft = Mathf.Clamp(careEventStageAmount - newEvents.Count, 0, careEventStageAmount);
 
-                newEvents.AddRange(TakeRandomOptionalEvent(plantStage.optionalEvents, numberOfEventsLeft));
-                potWithPlant.waitingCareEvents.AddRange(newEvents);
-                potWithPlant.waitingCareEvents = potWithPlant.waitingCareEvents.Distinct().ToList();
-                potWithPlant.lastStatusUpdate = DateTime.UtcNow;
+                    newEvents.AddRange(TakeRandomOptionalEvent(plantStage.optionalEvents, numberOfEventsLeft));
+                    potWithPlant.waitingCareEvents.AddRange(newEvents);
+                    potWithPlant.waitingCareEvents = potWithPlant.waitingCareEvents.Distinct().ToList();
+                    potWithPlant.lastCareAddedTime = DateTime.UtcNow;
+                }
+
+                foreach (var careEvent in potWithPlant.waitingCareEvents.Where(careEvent => potWithPlant.GetState(careEvent) == null))
+                {
+                    stateInfos.Find(stateInfo => stateInfo.EvenName == careEvent)?.Apply(potWithPlant);
+
+                }
             }
-
-            potWithPlant.waitingCareEvents.ForEach(careEvent =>
+            else
             {
-                stateInfos.FirstOrDefault(stateInfo => stateInfo.EvenName == careEvent)?.Apply(potWithPlant);
-            });
+                potWithPlant.Rot();
+            }
         }
     }
 
@@ -114,13 +120,15 @@ public class CareManager : MonoBehaviour
 
         CareCanvas.ShowMenu(currentPlant);
         CareCanvas.OnBackPressed = FinishCare;
+    }
 
-        finishPlantingCanvas.finishPlantingButton.onClick.RemoveAllListeners();
-        finishPlantingCanvas.finishPlantingButton.onClick.AddListener(() =>
+    public void UpdateMenu()
+    {
+        if (CareInProcess)
         {
-            OnCareFinished?.Invoke(potWithPlant);
-            finishPlantingCanvas.HideMenu();
-        });
+            CareCanvas.ShowMenu(currentPlant);
+            CareCanvas.OnBackPressed = FinishCare;
+        }
     }
 
     public async Task StartCareAsync(CareEvent eventName)
@@ -152,7 +160,7 @@ public class CareManager : MonoBehaviour
 
             if (!currentPlant.waitingCareEvents.Any())
             {
-                currentPlant.UpdateCareTime();
+                currentPlant.UpdateStageChangeTime();
                 currentPlant.SetStage(++currentPlant.currentStage);
             }
         }

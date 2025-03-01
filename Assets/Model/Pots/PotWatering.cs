@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PotWatering : MonoBehaviour
 {
-    public event Action OnPlantWatered;
+    public Action OnPlantWatered;
 
     [Space]
     public float targetWateringParticlesAmount = 70;
@@ -24,6 +24,7 @@ public class PotWatering : MonoBehaviour
     public void StartWatering()
     {
         currentWateringParticlesAmount = 0;
+        wateringProgress = 0;
         dirtRenderer.sharedMaterial.color = Color.white;
     }
 

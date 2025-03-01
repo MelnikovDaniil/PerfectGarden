@@ -34,7 +34,7 @@ public class WateringCareEventHandler : CareEventHandler
     {
         wateringCan.StartWaterging();
         Context.PotWithPlant.potWatering.StartWatering();
-        Context.PotWithPlant.potWatering.OnPlantWatered += () => { plantWatered = true; };
+        Context.PotWithPlant.potWatering.OnPlantWatered = () => { plantWatered = true; };
 
         while (!plantWatered)
         {

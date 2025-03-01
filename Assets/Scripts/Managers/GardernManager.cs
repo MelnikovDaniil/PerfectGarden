@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ public class GardernManager : MonoBehaviour
 {
     public GardernManager Instance;
     public float plantCellScale = 0.3f;
+    public int stateCheckIntervalSec = 60;
 
     public GameObject gardenLocation;
     public PotWithPlant potWithPlantPrefab;
@@ -19,7 +21,7 @@ public class GardernManager : MonoBehaviour
     private List<PotInfo> potTypes;
     private List<PlantInfo> plantTypes;
 
-    private List<PotWithPlant>_growingPlants;
+    private List<PotWithPlant> _growingPlants;
 
     private LayerMask selectionLayerMask;
 
@@ -38,6 +40,7 @@ public class GardernManager : MonoBehaviour
             _growingPlants.Add(potWithPlant);
             gardenLocation.SetActive(true);
             PlacePlant(potWithPlant);
+            ShowStatuses();
         };
 
         CareManager.OnCareFinished += (plant) =>
@@ -54,11 +57,14 @@ public class GardernManager : MonoBehaviour
                 _growingPlants.Remove(plant);
                 Destroy(plant.gameObject);
             }
+            ShowStatuses();
         };
 
         potTypes = Resources.LoadAll<PotInfo>("Pots").ToList();
         plantTypes = Resources.LoadAll<PlantInfo>("Plants").ToList();
         LoadPlants();
+
+        var _ = StateChecking();
     }
 
     private async void Update()
@@ -92,14 +98,32 @@ public class GardernManager : MonoBehaviour
 
     public async Task StartPlantingAsync(Vector3 tilePostion)
     {
+        HideStatuses();
         gardenLocation.SetActive(false);
         await PlantingManager.Instance.StartPlanting(tilePostion);
     }
 
     public async Task StartCaringAsync(PotWithPlant potWithPlant)
     {
+        HideStatuses();
         gardenLocation.SetActive(false);
         await CareManager.Instance.OpenCareMenu(potWithPlant);
+    }
+
+    private void ShowStatuses()
+    {
+        foreach (var plant in _growingPlants)
+        {
+            plant.plantStatus.ShowPlantStatus();
+        }
+    }
+
+    private void HideStatuses()
+    {
+        foreach (var plant in _growingPlants)
+        {
+            plant.plantStatus.HideStatus();
+        }
     }
 
     private void PlacePlant(PotWithPlant potWithPlant)
@@ -123,8 +147,8 @@ public class GardernManager : MonoBehaviour
                 plantId = Guid.NewGuid().ToString(),
                 cellPosition = plant.cell,
                 currentStage = plant.currentStage,
-                lastCareTimeUtc = plant.lastCareTime.Ticks,
-                lastStatusUpdateTimeUtc = plant.lastStatusUpdate.Ticks,
+                lastCareTimeUtc = plant.lastStageChangeTime.Ticks,
+                lastStatusUpdateTimeUtc = plant.lastCareAddedTime.Ticks,
                 plantName = plant.plantInfo.name,
                 potName = plant.potInfo.name,
                 waitingCareEvents = plant.waitingCareEvents,
@@ -144,9 +168,9 @@ public class GardernManager : MonoBehaviour
             createdPotWithPlant.plantInfo = plantTypes.First(x => x.name == state.plantName);
             createdPotWithPlant.cell = state.cellPosition;
             createdPotWithPlant.waitingCareEvents = state.waitingCareEvents;
-            createdPotWithPlant.lastCareTime = new DateTime(state.lastCareTimeUtc);
-            createdPotWithPlant.lastStatusUpdate = new DateTime(state.lastStatusUpdateTimeUtc);
-            if (createdPotWithPlant.IsRotten)
+            createdPotWithPlant.lastStageChangeTime = new DateTime(state.lastCareTimeUtc);
+            createdPotWithPlant.lastCareAddedTime = new DateTime(state.lastStatusUpdateTimeUtc);
+            if (createdPotWithPlant.IsShouldBeRotted)
             {
                 createdPotWithPlant.Rot();
             }
@@ -158,6 +182,17 @@ public class GardernManager : MonoBehaviour
             _growingPlants.Add(createdPotWithPlant);
         }
         CareManager.Instance.GenerateCare(_growingPlants);
+        ShowStatuses();
+    }
+
+    private async Task StateChecking()
+    {
+        while (true)
+        {
+            await Task.Delay(1000 * stateCheckIntervalSec);
+            CareManager.Instance.GenerateCare(_growingPlants);
+            CareManager.Instance.UpdateMenu();
+        }
     }
 
     private void OnApplicationQuit()
