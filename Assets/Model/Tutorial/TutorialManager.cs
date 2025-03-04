@@ -13,9 +13,6 @@ public class TutorialManager : MonoBehaviour
     public List<TutorialScenario> tutorialScenarios;
     public TutorialPointer pointerPrefab;
 
-    [SerializeField] private GameObject debugObject;
-
-
     private List<TutorialPointer> pointersPool = new List<TutorialPointer>();
     private InteractionController interactionController;
     private HighlightManager highlightManager;
@@ -32,26 +29,6 @@ public class TutorialManager : MonoBehaviour
         interactionController = new InteractionController();
         highlightManager = GetComponent<HighlightManager>();
     }
-
-    private async void Start()
-    {
-        if (debugObject != null)
-        {
-            await Task.Delay(5000);
-            await SetTap(debugObject, true);
-        }
-    }
-
-    //public async Task RunTutorialScenario(string scenarioName)
-    //{
-    //    var scenario = tutorialScenarios.Find(s => s.ScenarioName == scenarioName);
-    //    if (scenario == null) return;
-
-    //    foreach (var tutorialObject in scenario.TutorialObjects)
-    //    {
-    //        await HandleInteraction(tutorialObject);
-    //    }
-    //}
 
     #region Setters
 
@@ -266,19 +243,16 @@ public class TutorialManager : MonoBehaviour
 
     private bool IsTargetOrParent(GameObject current, GameObject target)
     {
-        // Если текущий объект является целевым, возвращаем true
         if (current == target)
         {
             return true;
         }
 
-        // Если у текущего объекта есть родитель, рекурсивно проверяем его
         if (current.transform.parent != null)
         {
             return IsTargetOrParent(current.transform.parent.gameObject, target);
         }
 
-        // Если дошли до корневого объекта и не нашли целевой, возвращаем false
         return false;
     }
     #endregion

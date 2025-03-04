@@ -46,8 +46,8 @@ public class HighlightManager : MonoBehaviour
             bounds = Get3DBounds(target);
         }
 
-        Vector3 min = Camera.main.WorldToScreenPoint(bounds.min);
-        Vector3 max = Camera.main.WorldToScreenPoint(bounds.max);
+        var min = Camera.main.WorldToScreenPoint(bounds.min);
+        var max = Camera.main.WorldToScreenPoint(bounds.max);
 
         if (target.GetComponent<RectTransform>() != null)
         {
@@ -55,21 +55,21 @@ public class HighlightManager : MonoBehaviour
             max = bounds.max;
         }
 
-        Vector2 maskCenter = new Vector2(
+        var maskCenter = new Vector2(
             ((min.x + max.x) / 2f) / Screen.width,
             ((min.y + max.y) / 2f) / Screen.height
         );
 
-        float width = Mathf.Abs(max.x - min.x);
-        float height = Mathf.Abs(max.y - min.y);
-        float radius = Mathf.Sqrt(width * width + height * height) / (2 * Screen.height);
+        var width = Mathf.Abs(max.x - min.x);
+        var height = Mathf.Abs(max.y - min.y);
+        var radius = Mathf.Sqrt(width * width + height * height) / (2 * Screen.height);
         radius += padding / Screen.height;
         radius = Mathf.Max(radius, minMaskRadius);
 
         border.rectTransform.anchorMin = maskCenter;
         border.rectTransform.anchorMax = maskCenter;
         border.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        float diameter = radius * 2 * Screen.height;
+        var diameter = radius * 2 * Screen.height;
         border.rectTransform.sizeDelta = new Vector2(diameter, diameter);
 
         cutoutMaterial.SetVector("_MaskCenter", new Vector4(maskCenter.x, maskCenter.y, 0, 0));
@@ -96,11 +96,11 @@ public class HighlightManager : MonoBehaviour
 
     private Bounds Get3DBounds(GameObject target)
     {
-        Renderer[] renderers = target.GetComponentsInChildren<Renderer>();
+        var renderers = target.GetComponentsInChildren<Renderer>();
         if (renderers.Length == 0) return new Bounds(target.transform.position, Vector3.zero);
 
-        Bounds bounds = renderers[0].bounds;
-        foreach (Renderer renderer in renderers)
+        var bounds = renderers[0].bounds;
+        foreach (var renderer in renderers)
         {
             bounds.Encapsulate(renderer.bounds);
         }
@@ -109,11 +109,11 @@ public class HighlightManager : MonoBehaviour
 
     private Bounds GetUIBounds(RectTransform rectTransform)
     {
-        Vector3[] corners = new Vector3[4];
+        var corners = new Vector3[4];
         rectTransform.GetWorldCorners(corners);
 
-        Vector3 min = RectTransformUtility.WorldToScreenPoint(null, corners[0]);
-        Vector3 max = RectTransformUtility.WorldToScreenPoint(null, corners[2]);
+        var min = RectTransformUtility.WorldToScreenPoint(null, corners[0]);
+        var max = RectTransformUtility.WorldToScreenPoint(null, corners[2]);
 
         return new Bounds((min + max) / 2, max - min);
     }
