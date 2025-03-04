@@ -21,7 +21,7 @@ public class SeedPlantEventHandler : PlantEventHandler
 
         seedPackage.gameObject.SetActive(true);
         seedPackage.interactable = false;
-        seedPackage.SetUp(Context.PackageSprite, Context.SeedSprite); 
+        seedPackage.SetUp(Context.PackageSprite, Context.SeedSprite);
         seedPackage.transform.localPosition = Vector3.zero;
 
         seedPlantAnimator.gameObject.SetActive(true);
@@ -32,7 +32,7 @@ public class SeedPlantEventHandler : PlantEventHandler
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
         seedPackage.interactable = true;
-        Context.PotWithPlant.OnSeedPlant += () => 
+        Context.PotWithPlant.OnSeedPlant += () =>
         {
 
             Context.PotWithPlant.plantInfo = Context.plantInfo;

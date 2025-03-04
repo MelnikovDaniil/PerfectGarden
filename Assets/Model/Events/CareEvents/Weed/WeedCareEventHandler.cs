@@ -65,7 +65,7 @@ public class WeedCareEventHandler : CareEventHandler
                         state.PullOutWeed();
                     }
                 }
-                
+
                 pulledWeed = null;
             }
         }

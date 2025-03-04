@@ -2,7 +2,7 @@
 
 public static class MoneyMapper
 {
-    public static int Money 
+    public static int Money
     {
         get => Get();
         set => Set(value);

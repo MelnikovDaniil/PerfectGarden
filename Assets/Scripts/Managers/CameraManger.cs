@@ -6,7 +6,6 @@ public class CameraManger : MonoBehaviour
     public static CameraManger Instanse;
     public Transform target;
     public Camera mainCamera;
-    public Camera uiCamera;
     public float transitionDuration = 1.0f;
 
     [Header("Test settings")]

@@ -12,7 +12,7 @@ public class StickCareEventHandler : CareEventHandler
     public override CareEvent EventName => CareEvent.Stick;
 
     private Stick createdStick;
-    
+
     private Vector2? startTouchPosition;
     private Vector2? endTouchPosition;
 

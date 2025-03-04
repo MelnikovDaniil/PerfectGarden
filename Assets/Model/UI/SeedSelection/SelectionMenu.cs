@@ -14,7 +14,7 @@ public class SelectionMenu : MonoBehaviour
     [SerializeField] private Canvas errorMessage;
     [SerializeField] private ProductMiniCard miniCardPrefab;
     [SerializeField] private List<TextMeshProUGUI> moneyTests;
-    
+
 
     public void GenerateCards(List<ProductInfo> productInfos)
     {
@@ -74,7 +74,7 @@ public class SelectionMenu : MonoBehaviour
             ShowErrorMessage();
         }
     }
-    
+
     private void ShowErrorMessage()
     {
         errorMessage.gameObject.SetActive(true);

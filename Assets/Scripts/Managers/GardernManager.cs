@@ -75,7 +75,7 @@ public class GardernManager : MonoBehaviour
             mousePos.z = 10;
             var ray = Camera.main.ScreenPointToRay(mousePos);
             //var tilePos = _plantingTileMap.WorldToCell(clickPos);
-            var areaSelected = Physics.Raycast(ray,out var hit, float.PositiveInfinity, selectionLayerMask);
+            var areaSelected = Physics.Raycast(ray, out var hit, float.PositiveInfinity, selectionLayerMask);
             if (areaSelected)
             {
                 var potWithPlant = hit.collider.GetComponentInParent<PotWithPlant>();

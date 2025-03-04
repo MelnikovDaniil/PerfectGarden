@@ -24,7 +24,7 @@ public static class PlantStateInfoMapper
         {
             return JsonHelper.FromJson<PlantStateInfo>(json).ToList();
         }
-        return new PlantStateInfo [0].ToList();
+        return new PlantStateInfo[0].ToList();
     }
 
     public static void SavePlantStates(List<PlantStateInfo> plantStates)

@@ -38,7 +38,7 @@ public class PlantsStatusUI : MonoBehaviour
 
     private void HideIcons()
     {
-        foreach(var icon in iconsPool)
+        foreach (var icon in iconsPool)
         {
             icon.gameObject.SetActive(false);
         }

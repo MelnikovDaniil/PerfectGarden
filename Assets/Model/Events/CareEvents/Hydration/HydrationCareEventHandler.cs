@@ -36,7 +36,7 @@ public class HydrationCareEventHandler : CareEventHandler
         MoveSpray(createdSprayAnimator.transform, GenerateSprayPosition());
         createdSprayAnimator.gameObject.SetActive(true);
 
-        
+
         return base.PrepareHandlingAsync(token);
     }
 

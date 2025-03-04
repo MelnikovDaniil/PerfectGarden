@@ -1,8 +1,8 @@
 ﻿// Cristian Pop - https://boxophobic.com/
 
-using UnityEngine;
-using UnityEditor;
 using System;
+using UnityEditor;
+using UnityEngine;
 
 namespace Boxophobic.StyledGUI
 {
@@ -17,7 +17,7 @@ namespace Boxophobic.StyledGUI
         {
             //if (prop.floatValue > 0.5f)
             //{
-                //GUI.enabled = true;
+            //GUI.enabled = true;
             //}
             //else
             {
