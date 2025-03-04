@@ -1,10 +1,9 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using System.Threading.Tasks;
-using TMPro;
 
 public class CareMenu : MonoBehaviour
 {
@@ -16,7 +15,7 @@ public class CareMenu : MonoBehaviour
     public TextMeshProUGUI priceText;
     public GameObject canvas;
     public Button BackButton;
-    
+
     private void Awake()
     {
         canvas.SetActive(false);
@@ -62,7 +61,7 @@ public class CareMenu : MonoBehaviour
                 await CareManager.Instance.PurchaseAsync();
             });
         }
-        
+
     }
 
     public void HideMenu()

@@ -35,7 +35,8 @@ public class PotWithPlant : MonoBehaviour
     [NonSerialized] public DateTime lastCareAddedTime;
     [NonSerialized] public Vector3 cell;
 
-    /*[NonSerialized] */public List<CareEvent> waitingCareEvents = new List<CareEvent>();
+    /*[NonSerialized] */
+    public List<CareEvent> waitingCareEvents = new List<CareEvent>();
 
     [Space]
     public Transform plantPlace;
