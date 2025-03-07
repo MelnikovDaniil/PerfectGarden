@@ -39,6 +39,7 @@ public class GardernManager : MonoBehaviour
 
     private void Start()
     {
+        CareManager.Instance.GenerateCare(growingPlants);
         PlantingManager.OnPlantingFinished += potWithPlant =>
         {
             growingPlants.Add(potWithPlant);
@@ -165,7 +166,6 @@ public class GardernManager : MonoBehaviour
             PlacePlant(createdPotWithPlant);
             growingPlants.Add(createdPotWithPlant);
         }
-        CareManager.Instance.GenerateCare(growingPlants);
     }
 
     private async Task StateChecking()
