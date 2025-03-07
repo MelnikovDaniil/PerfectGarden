@@ -79,28 +79,15 @@ public class RewardManager : MonoBehaviour
 
         var randomDirection = Camera.main.WorldToScreenPoint(Random.insideUnitCircle * spawnRadius);
         var movementTime = spawnTime - delay;
-        StartCoroutine(MoveCoinToTargetCoroutine(coin.rectTransform, randomDirection, movementTime));
+        StartCoroutine(
+            MovementHelper.MoveObjectToTargetRoutine(coin.rectTransform, randomDirection, movementTime));
     }
 
     private IEnumerator MoveToTextTarget(Image coin, float delay)
     {
         yield return new WaitForSeconds(delay);
-        yield return MoveCoinToTargetCoroutine(coin.rectTransform, scoreText.rectTransform.position, targetMovementTime - delay);
+        yield return MovementHelper.MoveObjectToTargetRoutine(coin.rectTransform, scoreText.rectTransform.position, targetMovementTime - delay);
         MoneyMapper.Money += 1;
         OnTextUpdate?.Invoke();
-    }
-
-    private IEnumerator MoveCoinToTargetCoroutine(RectTransform coin, Vector2 target, float movementTime)
-    {
-        var startPosition = coin.position;
-        var elapsedTime = 0f;
-
-        while (elapsedTime < movementTime)
-        {
-            var t = Mathf.SmoothStep(0, 1.0f, elapsedTime / movementTime);
-            coin.position = Vector3.Lerp(startPosition, target, t);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
     }
 }

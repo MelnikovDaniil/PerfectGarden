@@ -1,9 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
-public class CameraManger : MonoBehaviour
+public class CameraManager : MonoBehaviour
 {
-    public static CameraManger Instanse;
+    public static CameraManager Instanse;
     public Transform target;
     public Camera mainCamera;
     public float transitionDuration = 1.0f;
@@ -44,20 +44,20 @@ public class CameraManger : MonoBehaviour
 
     public void LookAtObjectPresetup()
     {
-        LookAtObject(objToLook, testDistance, testOffset);
+        LookAtPoint(objToLook.transform.position, testDistance, testOffset);
     }
 
-    public void LookAtObject(GameObject objectToLook, float distance, Vector3 offset)
+    public void LookAtPoint(Vector3 pointToLook, float zoom, Vector3 offset)
     {
-        var targetPosition = GetTargetPosition(objectToLook.transform.position, offset, distance);
-        var targetOrthographicSize = originalOrthographicSize * (1.0f - distance / 10.0f);
+        var targetPosition = GetTargetPosition(pointToLook, offset, zoom);
+        var targetOrthographicSize = originalOrthographicSize * (1.0f - zoom / 10.0f);
 
         if (currentTransition != null)
         {
             StopCoroutine(currentTransition);
         }
 
-        currentTransition = StartCoroutine(MoveCamera(targetPosition, objectToLook.transform.position, targetOrthographicSize));
+        currentTransition = StartCoroutine(MoveCamera(targetPosition, pointToLook, targetOrthographicSize));
     }
 
     private IEnumerator MoveCamera(Vector3 targetPosition, Vector3 lookAtPosition, float targetOrthographicSize)

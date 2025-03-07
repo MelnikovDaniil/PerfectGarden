@@ -151,6 +151,7 @@ public class CareManager : MonoBehaviour
         await eventHandler.PrepareAsync(eventCancellationSource.Token);
         await eventHandler.StartAsync(eventCancellationSource.Token);
         eventHandler.Clear();
+        await Task.Delay((int)(CameraManager.Instanse.transitionDuration * 1000));
 
         if (eventHandler.Status == HandlingStatus.Finished)
         {

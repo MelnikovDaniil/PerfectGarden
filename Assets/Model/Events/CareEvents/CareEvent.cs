@@ -7,7 +7,7 @@ public enum CareEvent
     Stick,
     Hydration,
     Weed,
-    Care4,
+    Pests,
     Care5,
     Care6,
 }
