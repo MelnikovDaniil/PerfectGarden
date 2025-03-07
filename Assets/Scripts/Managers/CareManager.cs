@@ -37,7 +37,6 @@ public class CareManager : MonoBehaviour
 
     public void GenerateCare(List<PotWithPlant> potWithPlants)
     {
-        // Добавить время последнего обновление стадий ухода
         foreach (var potWithPlant in potWithPlants.Where(x => !x.IsDied))
         {
             if (!potWithPlant.IsShouldBeRotted)
@@ -160,8 +159,13 @@ public class CareManager : MonoBehaviour
 
             if (!currentPlant.waitingCareEvents.Any())
             {
+                RewardManager.Instance.GenerateCareLargeReward();
                 currentPlant.UpdateStageChangeTime();
                 currentPlant.SetStage(++currentPlant.currentStage);
+            }
+            else
+            {
+                RewardManager.Instance.GenerateCareReward();
             }
         }
 

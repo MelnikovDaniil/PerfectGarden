@@ -9,6 +9,7 @@ public class CareMenu : MonoBehaviour
 {
     public Action OnBackPressed;
 
+    public TMP_Text currencyText;
     public List<CareButton> careButtons;
     public Button purchaseButton;
     public Button trashButton;
@@ -20,6 +21,7 @@ public class CareMenu : MonoBehaviour
     {
         canvas.SetActive(false);
         careButtons.ForEach(x => x.gameObject.SetActive(false));
+        RewardManager.Instance.OnTextUpdate += () => { currencyText.text = MoneyMapper.Money + "$"; };
     }
 
     private void Start()
@@ -31,6 +33,7 @@ public class CareMenu : MonoBehaviour
     public void ShowMenu(PotWithPlant plant)
     {
         canvas.SetActive(true);
+        currencyText.text = MoneyMapper.Money + "$";
         BackButton.gameObject.SetActive(true);
         HideCareButtons();
 
