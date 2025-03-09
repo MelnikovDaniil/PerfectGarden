@@ -51,7 +51,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dirtCollider: {fileID: 1452612364044841864}
   IsDied: 0
-  waitingCareEvents: 
   plantPlace: {fileID: 324327969626017564}
   potBottomPostionY: 0
 --- !u!114 &7686617431984513681

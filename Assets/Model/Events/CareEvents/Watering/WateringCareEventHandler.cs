@@ -53,7 +53,6 @@ public class WateringCareEventHandler : CareEventHandler
     public override void Clear()
     {
         plantWatered = false;
-        Context.PotWithPlant.gameObject.SetActive(false);
         wateringCan.StopWatering();
         wateringCan.gameObject.SetActive(false);
         waterignAnimator.gameObject.SetActive(false);

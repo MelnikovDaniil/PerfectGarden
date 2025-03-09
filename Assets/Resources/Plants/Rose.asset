@@ -23,6 +23,8 @@ MonoBehaviour:
       chance: 2
     - careEvent: 3
       chance: 1
+    - careEvent: 4
+      chance: 1
   - stagePlant: {fileID: 7692745883831005566, guid: 95159c793a2dc81408e7d0a9904076a4, type: 3}
     requiredEvents: 00000000
     optionalEvents:
@@ -31,6 +33,8 @@ MonoBehaviour:
     - careEvent: 1
       chance: 1
     - careEvent: 2
+      chance: 1
+    - careEvent: 4
       chance: 1
   - stagePlant: {fileID: 6624642188048812788, guid: 5cd6f38a60878974b90e3e9bfa08b012, type: 3}
     requiredEvents: 00000000

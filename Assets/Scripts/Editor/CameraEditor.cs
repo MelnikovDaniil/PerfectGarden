@@ -1,13 +1,13 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(CameraManger))]
+[CustomEditor(typeof(CameraManager))]
 [CanEditMultipleObjects]
 public class CameraEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        CameraManger myComponent = (CameraManger)target;
+        CameraManager myComponent = (CameraManager)target;
 
         DrawDefaultInspector();
 
