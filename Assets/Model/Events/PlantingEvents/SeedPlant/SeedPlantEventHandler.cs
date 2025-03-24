@@ -26,7 +26,7 @@ public class SeedPlantEventHandler : PlantEventHandler
 
         seedPlantAnimator.gameObject.SetActive(true);
 
-        await PlayAnimationForTheEndAsync(seedPlantAnimator, "Appearance");
+        await AnimatorHelper.PlayAnimationForTheEndAsync(seedPlantAnimator, "Appearance");
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)

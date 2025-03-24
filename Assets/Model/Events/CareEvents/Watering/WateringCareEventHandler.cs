@@ -14,6 +14,7 @@ public class WateringCareEventHandler : CareEventHandler
 
     protected override async Task PrepareHandlingAsync(CancellationToken token = default)
     {
+        // Disable care rotation
         plantWatered = false;
         Context.PotWithPlant.gameObject.SetActive(true);
         Context.PotWithPlant.transform.parent = potTransformParent;
@@ -25,7 +26,7 @@ public class WateringCareEventHandler : CareEventHandler
         wateringCan.transform.localPosition = Vector3.zero;
 
         waterignAnimator.gameObject.SetActive(true);
-        await PlayAnimationForTheEndAsync(waterignAnimator, "Appearance");
+        await AnimatorHelper.PlayAnimationForTheEndAsync(waterignAnimator, "Appearance");
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
@@ -47,11 +48,13 @@ public class WateringCareEventHandler : CareEventHandler
 
     protected override Task InterruptHandlingAsync()
     {
+        // enable care rotation
         return base.InterruptHandlingAsync();
     }
 
     public override void Clear()
     {
+        // enable care rotation
         plantWatered = false;
         wateringCan.StopWatering();
         wateringCan.gameObject.SetActive(false);

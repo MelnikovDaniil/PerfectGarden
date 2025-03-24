@@ -26,7 +26,7 @@ public class WateringEventHandler : PlantEventHandler
 
         waterignAnimator.gameObject.SetActive(true);
 
-        await PlayAnimationForTheEndAsync(waterignAnimator, "Appearance");
+        await AnimatorHelper.PlayAnimationForTheEndAsync(waterignAnimator, "Appearance");
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)

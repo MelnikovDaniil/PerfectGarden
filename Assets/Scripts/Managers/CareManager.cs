@@ -41,7 +41,7 @@ public class CareManager : MonoBehaviour
         {
             if (!potWithPlant.IsShouldBeRotted)
             {
-                if (potWithPlant.IsNewCare && !potWithPlant.IsLastStage)
+                if (potWithPlant.IsNewCare() && !potWithPlant.IsLastStage)
                 {
                     var plantStage = potWithPlant.plantInfo.growStages[potWithPlant.currentStage];
 

@@ -46,7 +46,7 @@ public class StickCareEventHandler : CareEventHandler
             await Task.Yield();
         }
 
-        await PlayAnimationForTheEndAsync(createdStick.animator, "Stick_Install");
+        await AnimatorHelper.PlayAnimationForTheEndAsync(createdStick.animator, "Stick_Install");
 
         await Task.CompletedTask;
     }

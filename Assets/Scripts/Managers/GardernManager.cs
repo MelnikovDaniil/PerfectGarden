@@ -137,6 +137,9 @@ public class GardernManager : MonoBehaviour
                 plantName = plant.plantInfo.name,
                 potName = plant.potInfo.name,
                 waitingCareEvents = plant.waitingCareEvents,
+                buffs = plant.GetAllBuffStates()
+                    .Select(x => x.GetSaveInfo())
+                    .ToList()
             }).ToList();
 
         PlantStateInfoMapper.SavePlantStates(states);
@@ -163,6 +166,7 @@ public class GardernManager : MonoBehaviour
             {
                 createdPotWithPlant.SetStage(state.currentStage);
             }
+            BuffManager.Instance.ApplyBuffs(createdPotWithPlant, state.buffs);
             PlacePlant(createdPotWithPlant);
             growingPlants.Add(createdPotWithPlant);
         }
