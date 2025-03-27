@@ -61,6 +61,7 @@ public class PotWithPlant : MonoBehaviour
     {
         plantPlace.gameObject.SetActive(false);
         careStates = new List<CareState>();
+        buffStates = new List<BuffState>();
         potDirtFilling = GetComponent<PotDirtFilling>();
         potWatering = GetComponent<PotWatering>();
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public abstract class BuffSaveInfo
+public class BuffSaveInfo
 {
     public BuffType buffType;
 }

@@ -8,6 +8,4 @@ public enum CareEvent
     Hydration,
     Weed,
     Pests,
-    Fertilizer,
-    Care6,
 }

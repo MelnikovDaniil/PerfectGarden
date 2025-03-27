@@ -23,4 +23,17 @@ public class BuffManager : MonoBehaviour
             scriptableBuff.Apply(plant, save);
         }
     }
+
+    public void ApplyBuff(PotWithPlant plant, BuffType buffType)
+    {
+        var buff = buffs.Find(x => x.BuffType == buffType);
+        if (buff != null)
+        {
+            buff.Apply(plant);
+        }
+        else
+        {
+            Debug.LogError("Buff not found");
+        }
+    }
 }

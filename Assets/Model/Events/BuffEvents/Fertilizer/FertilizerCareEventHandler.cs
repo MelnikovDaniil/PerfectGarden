@@ -5,9 +5,9 @@ using static UnityEngine.ParticleSystem;
 
 namespace Assets.Model.Events.CareEvents.Fertilizer
 {
-    public class FertilizerCareEventHandler : CareEventHandler
+    public class FertilizerCareEventHandler : BuffEventHandler
     {
-        public override CareEvent EventName => CareEvent.Fertilizer;
+        public override BuffType EventName => BuffType.SpeedGro;
 
         public LevelEstimationText levelEstimationTextPrefab;
         public GlassBottle glassBottlePrefab;
@@ -182,19 +182,6 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
             }
 
             sprayInstance.gameObject.SetActive(false);
-
-            while (true)
-            {
-                if (token.IsCancellationRequested)
-                {
-                    await InterruptAsync();
-                    return;
-                }
-                await Task.Yield();
-            }
-
-            // Add buff for growing speed increase
-            // Guide
         }
 
         protected override async Task InterruptHandlingAsync()

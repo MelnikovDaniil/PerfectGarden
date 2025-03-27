@@ -10,6 +10,7 @@ public class CareMenu : MonoBehaviour
     public Action OnBackPressed;
 
     public TMP_Text currencyText;
+    public List<BuffButton> buffButtons;
     public List<CareButton> careButtons;
     public Button purchaseButton;
     public Button trashButton;
@@ -35,23 +36,36 @@ public class CareMenu : MonoBehaviour
         canvas.SetActive(true);
         currencyText.text = MoneyMapper.Money + "$";
         BackButton.gameObject.SetActive(true);
-        HideCareButtons();
+        HideAllButtons();
 
         if (plant.IsShouldBeRotted)
         {
             trashButton.gameObject.SetActive(true);
             trashButton.onClick.AddListener(async () =>
             {
-                HideCareButtons();
+                HideAllButtons();
                 await CareManager.Instance.MoveToTrash();
             });
         }
         else if (!plant.IsLastStage)
         {
-            var buttonsToEnable = careButtons.Where(x => plant.waitingCareEvents.Contains(x.eventName));
-            foreach (var careButton in buttonsToEnable)
+            
+            if (plant.waitingCareEvents.Any())
             {
-                careButton.gameObject.SetActive(true);
+                var careButtonsToEnable = careButtons.Where(x => plant.waitingCareEvents.Contains(x.eventName));
+                foreach (var careButton in careButtonsToEnable)
+                {
+                    careButton.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                var activeBuffTypes = plant.GetAllBuffStates().Select(x => x.buffType);
+                var buffButtonsToEnable = buffButtons.Where(x => !activeBuffTypes.Contains(x.buffType));
+                foreach (var buffButton in buffButtonsToEnable)
+                {
+                    buffButton.gameObject.SetActive(true);
+                }
             }
         }
         else
@@ -60,7 +74,7 @@ public class CareMenu : MonoBehaviour
             priceText.text = plant.plantInfo.plantPrice.ToString();
             purchaseButton.onClick.AddListener(async () =>
             {
-                HideCareButtons();
+                HideAllButtons();
                 await CareManager.Instance.PurchaseAsync();
             });
         }
@@ -75,11 +89,12 @@ public class CareMenu : MonoBehaviour
         BackButton.gameObject.SetActive(false);
     }
 
-    public void HideCareButtons()
+    public void HideAllButtons()
     {
         purchaseButton.onClick.RemoveAllListeners();
         trashButton.gameObject.SetActive(false);
         purchaseButton.gameObject.SetActive(false);
         careButtons.ForEach(x => x.gameObject.SetActive(false));
+        buffButtons.ForEach(x => x.gameObject.SetActive(false));
     }
 }

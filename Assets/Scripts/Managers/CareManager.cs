@@ -26,11 +26,13 @@ public class CareManager : MonoBehaviour
     private PotWithPlant currentPlant;
 
     private List<CareEventHandler> careEventHandlers;
+    private List<BuffEventHandler> buffEventHandlers;
 
     private void Awake()
     {
         Instance = this;
         careEventHandlers = GetComponents<CareEventHandler>().ToList();
+        buffEventHandlers = GetComponents<BuffEventHandler>().ToList();
     }
 
     public int careEventStageAmount = 3;
@@ -134,7 +136,7 @@ public class CareManager : MonoBehaviour
     {
         eventCancellationSource = new CancellationTokenSource();
 
-        CareCanvas.HideCareButtons();
+        CareCanvas.HideAllButtons();
         CareCanvas.OnBackPressed = () =>
         {
             eventCancellationSource?.Cancel();
@@ -170,6 +172,39 @@ public class CareManager : MonoBehaviour
             }
         }
 
+        SetupPlant(currentPlant);
+
+        CareCanvas.ShowMenu(currentPlant);
+        CareCanvas.OnBackPressed = FinishCare;
+    }
+
+    public async Task StartBuffAsync(BuffType buffType)
+    {
+        eventCancellationSource = new CancellationTokenSource();
+
+        CareCanvas.HideAllButtons();
+        CareCanvas.OnBackPressed = () =>
+        {
+            eventCancellationSource?.Cancel();
+        };
+
+        var eventHandler = buffEventHandlers.First(x => x.EventName == buffType);
+        var careContext = new CareContext
+        {
+            CarePlace = carePlace,
+            PotWithPlant = currentPlant
+        };
+
+        eventHandler.Setup(careContext);
+        await eventHandler.PrepareAsync(eventCancellationSource.Token);
+        await eventHandler.StartAsync(eventCancellationSource.Token);
+        eventHandler.Clear();
+        await Task.Delay((int)(CameraManager.Instanse.transitionDuration * 1000));
+        if (eventHandler.Status == HandlingStatus.Finished)
+        {
+            BuffManager.Instance.ApplyBuff(currentPlant, buffType);
+        }
+        
         SetupPlant(currentPlant);
 
         CareCanvas.ShowMenu(currentPlant);
