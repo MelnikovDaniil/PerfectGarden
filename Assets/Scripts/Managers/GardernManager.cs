@@ -34,11 +34,11 @@ public class GardernManager : MonoBehaviour
 
         potTypes = Resources.LoadAll<PotInfo>("Pots").ToList();
         plantTypes = Resources.LoadAll<PlantInfo>("Plants").ToList();
-        LoadPlants();
     }
 
     private void Start()
     {
+        LoadPlants();
         CareManager.Instance.GenerateCare(growingPlants);
         PlantingManager.OnPlantingFinished += potWithPlant =>
         {
@@ -137,6 +137,9 @@ public class GardernManager : MonoBehaviour
                 plantName = plant.plantInfo.name,
                 potName = plant.potInfo.name,
                 waitingCareEvents = plant.waitingCareEvents,
+                buffs = plant.GetAllBuffStates()
+                    .Select(x => x.GetSaveInfo())
+                    .ToList()
             }).ToList();
 
         PlantStateInfoMapper.SavePlantStates(states);
@@ -163,6 +166,7 @@ public class GardernManager : MonoBehaviour
             {
                 createdPotWithPlant.SetStage(state.currentStage);
             }
+            BuffManager.Instance.ApplyBuffs(createdPotWithPlant, state.buffs);
             PlacePlant(createdPotWithPlant);
             growingPlants.Add(createdPotWithPlant);
         }

@@ -58,6 +58,5 @@ public class PlantingManager : MonoBehaviour
         plantingContext.PotWithPlant.gameObject.SetActive(true);
         plantingContext.PotWithPlant.SetStage(0);
         plantingContext.PotWithPlant.UpdateStageChangeTime();
-        plantingContext.PotWithPlant.lastCareAddedTime = DateTime.UtcNow;
     }
 }

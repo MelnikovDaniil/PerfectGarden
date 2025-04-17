@@ -11,6 +11,7 @@ public class PlantStateInfo
     public string potName;
     public int currentStage;
     public List<CareEvent> waitingCareEvents;
+    public List<BuffSaveInfo> buffs;
     public long lastCareTimeUtc;
     public long lastStatusUpdateTimeUtc;
 }

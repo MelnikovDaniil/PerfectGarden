@@ -6,9 +6,9 @@ public class HydrationCareEventHandler : CareEventHandler
 {
     public int spraysAmount = 4;
     public Vector2 sprayDistanceRange = new Vector2(1f, 2f);
-    public Animator sprayAnimatorPrefab;
+    public HydrationSpray sprayPrefab;
 
-    private Animator createdSprayAnimator;
+    private HydrationSpray sprayInstance;
     private int currentSpraysAmount;
 
     private bool isSpraying = false;
@@ -20,21 +20,20 @@ public class HydrationCareEventHandler : CareEventHandler
     private void Awake()
     {
         sprayLayerMask = LayerMask.GetMask("Spray");
-        createdSprayAnimator = Instantiate(sprayAnimatorPrefab);
-        createdSprayAnimator.gameObject.SetActive(false);
-        createdSprayAnimator.gameObject.layer = LayerMask.NameToLayer("Spray");
-        GenerateSprayPosition();
+        sprayInstance = Instantiate(sprayPrefab);
+        sprayInstance.gameObject.SetActive(false);
+        sprayInstance.gameObject.layer = LayerMask.NameToLayer("Spray");
     }
 
     protected override Task PrepareHandlingAsync(CancellationToken token = default)
     {
-        createdSprayAnimator.transform.parent = Context.CarePlace;
-        createdSprayAnimator.transform.localScale = Vector3.one;
+        sprayInstance.transform.parent = Context.CarePlace;
+        sprayInstance.transform.localScale = Vector3.one;
 
         isSpraying = false;
         currentSpraysAmount = spraysAmount;
-        MoveSpray(createdSprayAnimator.transform, GenerateSprayPosition());
-        createdSprayAnimator.gameObject.SetActive(true);
+        sprayInstance.MoveSprayRelatively(Context.PotWithPlant.plantRenderer.transform, sprayInstance.GenerateSprayPosition(sprayDistanceRange));
+        sprayInstance.gameObject.SetActive(true);
 
 
         return base.PrepareHandlingAsync(token);
@@ -49,7 +48,7 @@ public class HydrationCareEventHandler : CareEventHandler
             if (currentSpraysAmount < previousSpraysAmount)
             {
                 previousSpraysAmount = currentSpraysAmount;
-                await MakeSprayAsync();
+                await sprayInstance.MakeSprayAsync(Context.PotWithPlant.plantRenderer.transform, sprayDistanceRange);
             }
 
             if (token.IsCancellationRequested)
@@ -83,34 +82,6 @@ public class HydrationCareEventHandler : CareEventHandler
     {
         isSpraying = false;
         currentSpraysAmount = spraysAmount;
-        createdSprayAnimator.gameObject.SetActive(false);
-    }
-
-    private async Task MakeSprayAsync()
-    {
-        await PlayAnimationForTheEndAsync(createdSprayAnimator, "Spray");
-        MoveSpray(createdSprayAnimator.transform, GenerateSprayPosition());
-    }
-
-    private void MoveSpray(Transform sprayTransform, Vector3 position)
-    {
-        sprayTransform.position = position + Context.PotWithPlant.plantRenderer.transform.position;
-        sprayTransform.localScale = new Vector2(
-            sprayTransform.localScale.x,
-            -Mathf.Sign(sprayTransform.position.x) * Mathf.Abs(sprayTransform.localScale.y));
-
-        var oppositeDirection = -position;
-        var angle = Mathf.Atan2(oppositeDirection.y, oppositeDirection.x) * Mathf.Rad2Deg;
-        sprayTransform.localRotation = Quaternion.Euler(0, 0, angle);
-    }
-
-    private Vector2 GenerateSprayPosition()
-    {
-        var sprayPositionNormalized = new Vector2(
-            Random.Range(-1f, 1f),
-            Random.value).normalized;
-        var index = Random.Range(sprayDistanceRange.x, sprayDistanceRange.y);
-
-        return sprayPositionNormalized * index;
+        sprayInstance.gameObject.SetActive(false);
     }
 }

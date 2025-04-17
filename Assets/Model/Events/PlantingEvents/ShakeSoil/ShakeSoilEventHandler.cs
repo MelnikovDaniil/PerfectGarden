@@ -27,7 +27,7 @@ public class ShakeSoilPlantEvent : PlantEventHandler
 
         potFillingAnimator.gameObject.SetActive(true);
 
-        await PlayAnimationForTheEndAsync(potFillingAnimator, "Appearance");
+        await AnimatorHelper.PlayAnimationForTheEndAsync(potFillingAnimator, "Appearance");
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)

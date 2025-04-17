@@ -6,6 +6,7 @@ using UnityEngine;
 public class PotWithPlant : MonoBehaviour
 {
     public event Action OnSeedPlant;
+    public event Action OnStageChange;
 
     public Collider dirtCollider;
 
@@ -17,9 +18,15 @@ public class PotWithPlant : MonoBehaviour
     /// If plant was upgraded to new stage it will wait for timeBetweenStages to add new care events
     /// If plant was upgraded to new stage, has care and waiting for a one day, it will take more care events
     /// </summary>
-    public bool IsNewCare => DateTime.UtcNow - lastStageChangeTime >= plantInfo.timeBetweenStages
-                && (!waitingCareEvents.Any() && DateTime.UtcNow - lastCareAddedTime >= plantInfo.timeBetweenStages)
-                    || (waitingCareEvents.Any() && DateTime.UtcNow - lastCareAddedTime >= TimeSpan.FromDays(1));
+    public bool IsNewCare()
+    {
+        var speedGroBuff  = GetBuffState<SpeedGroBuffState>(BuffType.SpeedGro);
+        //var timeBetweenStages = plantInfo.timeBetweenStages * ( != null ? 0.5f : 1f);
+        var nextStageDate = speedGroBuff != null ? speedGroBuff.endDate : lastStageChangeTime + plantInfo.timeBetweenStages;
+        return (nextStageDate < DateTime.UtcNow
+            && (!waitingCareEvents.Any() /*&& lastCareAddedTime + plantInfo.timeBetweenStages < DateTime.UtcNow*/)
+                || (waitingCareEvents.Any() && lastCareAddedTime + TimeSpan.FromDays(1) < DateTime.UtcNow));
+    }
 
     [NonSerialized] public Renderer plantRenderer;
     [NonSerialized] public PotDirtFilling potDirtFilling;
@@ -47,12 +54,14 @@ public class PotWithPlant : MonoBehaviour
     public int currentStage;
 
     private List<CareState> careStates;
+    private List<BuffState> buffStates;
 
 
     private void Awake()
     {
         plantPlace.gameObject.SetActive(false);
         careStates = new List<CareState>();
+        buffStates = new List<BuffState>();
         potDirtFilling = GetComponent<PotDirtFilling>();
         potWatering = GetComponent<PotWatering>();
     }
@@ -66,6 +75,8 @@ public class PotWithPlant : MonoBehaviour
             Destroy(flower.gameObject);
         }
         plantRenderer = Instantiate(plantInfo.growStages[plantStage].stagePlant, plantPlace.transform);
+        OnStageChange?.Invoke();
+        OnStageChange = null;
     }
 
     public void Rot()
@@ -85,6 +96,7 @@ public class PotWithPlant : MonoBehaviour
         lastStageChangeTime = DateTime.UtcNow;
     }
 
+    #region CareState
     public void AddCareState(CareState state)
     {
         careStates.Add(state);
@@ -118,6 +130,53 @@ public class PotWithPlant : MonoBehaviour
         careStates.ForEach(x => x.Complete(this));
         careStates.Clear();
     }
+
+    #endregion
+
+    #region BuffState
+    public void AddBuffState(BuffState state)
+    {
+        buffStates.Add(state);
+        state.Apply(this);
+    }
+
+    public IEnumerable<BuffState> GetAllBuffStates()
+    {
+        return buffStates;
+    }
+
+
+    public T GetBuffState<T>() where T : BuffState
+    {
+        return (T)buffStates.Find(x => x.GetType() == typeof(T));
+    }
+
+    public T GetBuffState<T>(BuffType buffType) where T : BuffState
+    {
+        return (T)buffStates.Find(x => x.buffType == buffType);
+    }
+
+    public BuffState GetBuffState(BuffType buffType)
+    {
+        return buffStates.Find(x => x.buffType == buffType);
+    }
+
+    public void CompleteBuffState(BuffType buffType)
+    {
+        var state = buffStates.Find(x => x.buffType == buffType);
+        state.Complete(this);
+        buffStates.Remove(state);
+    }
+
+    public void CompleteAllBUffStates()
+    {
+        buffStates.ForEach(x => x.Complete(this));
+        buffStates.Clear();
+    }
+
+    #endregion
+
+
 
     private void OnTriggerEnter(Collider collision)
     {

@@ -1,10 +1,21 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public abstract class EventHandler : MonoBehaviour
+public abstract class EventHandler<TEvent, TContext> : MonoBehaviour
+    where TEvent : Enum
+    where TContext : class
 {
+    public abstract TEvent EventName { get; }
     public HandlingStatus Status { get; protected set; }
+    protected TContext Context { get; private set; }
+
+    public void Setup(TContext context)
+    {
+        Status = HandlingStatus.Scheduled;
+        Context = context;
+    }
 
     public async Task PrepareAsync(CancellationToken token = default)
     {
@@ -33,19 +44,19 @@ public abstract class EventHandler : MonoBehaviour
         await Task.CompletedTask;
     }
 
+    public async Task InterruptAsync()
+    {
+        Status = HandlingStatus.Cancelled;
+        await InterruptHandlingAsync();
+    }
+
+    protected virtual async Task InterruptHandlingAsync()
+    {
+        await Task.CompletedTask;
+    }
+
     public virtual void Clear()
     {
 
-    }
-
-    protected async Task PlayAnimationForTheEndAsync(Animator animator, string animationName)
-    {
-        animator.Play(animationName, 0, 0);
-        await Task.Yield();
-        while (animator.GetCurrentAnimatorStateInfo(0).IsName(animationName) &&
-               animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-        {
-            await Task.Yield();
-        }
     }
 }

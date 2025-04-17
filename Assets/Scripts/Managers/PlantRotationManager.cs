@@ -2,13 +2,28 @@ using UnityEngine;
 
 public class PlantRotationManager : MonoBehaviour
 {
+    public static PlantRotationManager Instance;
     public Transform plantPlace;
     public float rotationSpeed = 100.0f;
     private bool isDragging = false;
 
+    private bool rotationEnabled;
+    private Quaternion startRotation;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        rotationEnabled = true;
+        startRotation = plantPlace.rotation;
+    }
+
     void Update()
     {
-        if (CareManager.CareInProcess)
+        if (rotationEnabled && CareManager.CareInProcess)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -29,6 +44,15 @@ public class PlantRotationManager : MonoBehaviour
         else if (isDragging)
         {
             isDragging = false;
+        }
+    }
+
+    public void SetRotationEnabled(bool enabled)
+    {
+        rotationEnabled = enabled;
+        if (rotationEnabled)
+        {
+            plantPlace.rotation = startRotation;
         }
     }
 }

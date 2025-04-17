@@ -37,8 +37,8 @@ public class ShakingSoil : MonoBehaviour
             var currentVelocityY = _rigidbody.linearVelocity.y;
             var accelerationY = currentVelocityY - previousVelocityY;
 
-            float targetAngle = MapVelocityToAngle(currentVelocityY);
-            float currentAngle = transform.eulerAngles.z;
+            var targetAngle = MapVelocityToAngle(currentVelocityY);
+            var currentAngle = transform.eulerAngles.z;
 
             if (currentVelocityY < stopThreshold && accelerationY > accelerationThreshold)
             {
