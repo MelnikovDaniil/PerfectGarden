@@ -38,6 +38,9 @@ public class SpeedGroBuffState : BuffState
 
     public override BuffSaveInfo GetSaveInfo()
     {
-        return new SpeedGroBuffSaveInfo { buffType = BuffType.SpeedGro, endDateUtc = endDate.Ticks };
+        var stateInfo = new SpeedGroBuffSaveInfo { buffType = BuffType.SpeedGro, endDateUtc = endDate.Ticks };
+        stateInfo.Serialize();
+        return stateInfo;
+
     }
 }

@@ -34,11 +34,11 @@ public class GardernManager : MonoBehaviour
 
         potTypes = Resources.LoadAll<PotInfo>("Pots").ToList();
         plantTypes = Resources.LoadAll<PlantInfo>("Plants").ToList();
-        LoadPlants();
     }
 
     private void Start()
     {
+        LoadPlants();
         CareManager.Instance.GenerateCare(growingPlants);
         PlantingManager.OnPlantingFinished += potWithPlant =>
         {

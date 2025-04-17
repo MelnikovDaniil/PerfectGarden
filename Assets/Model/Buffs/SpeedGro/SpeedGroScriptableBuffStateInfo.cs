@@ -15,7 +15,7 @@ public class SpeedGroScriptableBuffStateInfo : ScriptableBuffStateInfo
 
     public override BuffState CreateStateFromSave(BuffSaveInfo buffStateInfo)
     {
-        var speedGroBuffStateInfo = (SpeedGroBuffSaveInfo) buffStateInfo;
+        var speedGroBuffStateInfo = buffStateInfo.Deserialize<SpeedGroBuffSaveInfo>();
         return new SpeedGroBuffState(this, speedGroBuffStateInfo);
     }
 }
