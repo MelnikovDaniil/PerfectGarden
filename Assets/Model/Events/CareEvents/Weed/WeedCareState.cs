@@ -4,8 +4,9 @@ using UnityEngine;
 public class WeedCareState : CareState
 {
     public int weedNumberLeft;
+    public List<Weed> weeds;
+
     private WeedScriptableStateInfo weedStateInfo => (WeedScriptableStateInfo)StateInfo;
-    private List<Weed> weeds;
 
     public WeedCareState(WeedScriptableStateInfo stateInfo) : base(stateInfo) { }
 

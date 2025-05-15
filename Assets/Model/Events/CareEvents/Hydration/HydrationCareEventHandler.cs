@@ -41,6 +41,7 @@ public class HydrationCareEventHandler : CareEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        _ = TutorialManager.Instance.SetTap(sprayInstance.gameObject, false, token);
         isSpraying = true;
         var previousSpraysAmount = currentSpraysAmount;
         while (currentSpraysAmount > 0)

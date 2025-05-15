@@ -34,6 +34,7 @@ public class StickCareEventHandler : CareEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        _ = TutorialManager.Instance.SetSwipeAsync(createdStick.gameObject, Vector2.down, swipeThreshold, false, token);
         isDetecting = true;
 
         while (!stickInstalled)

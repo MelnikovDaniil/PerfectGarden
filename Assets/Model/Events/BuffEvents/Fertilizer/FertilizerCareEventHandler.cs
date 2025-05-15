@@ -94,6 +94,7 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
             var estimationLevel = GlassBottleLevel.TryAgain;
 
             bucketInstance.SetUp();
+            _ = TutorialManager.Instance.SetHoldAsync(bucketInstance.gameObject, 0.5f, false, token);
             bucketInstance.OnBucketUp = () => levelArchived = true;
             var iterationNumber = Random.Range(iterationRange.x, iterationRange.y);
             var previousColor = Color.white;
@@ -138,9 +139,10 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
                 true);
             await glassBottleInstance.CloseCapAsync();
 
+            _ = TutorialManager.Instance.SetShake(glassBottleInstance.gameObject, false, token);
             try
             {
-                await glassBottleInstance.StartShakingAsync();
+                await glassBottleInstance.StartShakingAsync(token);
             }
             catch (TaskCanceledException)
             {
@@ -158,6 +160,7 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
                 Context.PotWithPlant.plantRenderer.transform,
                 sprayInstance.GenerateSprayPosition(sprayDistanceRange));
             sprayInstance.gameObject.SetActive(true);
+            _ = TutorialManager.Instance.SetTap(sprayInstance.gameObject, false, token);
 
             while (currentSpraysAmount > 0)
             {

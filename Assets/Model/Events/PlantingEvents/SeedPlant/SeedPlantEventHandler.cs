@@ -31,6 +31,7 @@ public class SeedPlantEventHandler : PlantEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        _ = TutorialManager.Instance.SetTap(seedPackage.gameObject, false, token);
         seedPackage.interactable = true;
         Context.PotWithPlant.OnSeedPlant += () =>
         {

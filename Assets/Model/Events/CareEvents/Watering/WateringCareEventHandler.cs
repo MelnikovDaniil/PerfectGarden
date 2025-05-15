@@ -31,6 +31,7 @@ public class WateringCareEventHandler : CareEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        _ = TutorialManager.Instance.SetHoldAsync(wateringCan.gameObject, 1f, false, token);
         wateringCan.StartWaterging();
         Context.PotWithPlant.potWatering.StartWatering();
         Context.PotWithPlant.potWatering.OnPlantWatered = () => { plantWatered = true; };

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class TutorialManager : MonoBehaviour
@@ -17,7 +20,7 @@ public class TutorialManager : MonoBehaviour
     private InteractionController interactionController;
     private HighlightManager highlightManager;
 
-    private Vector3 startPosition;
+    private Vector3? startPosition;
     private float holdTime;
 
     private int tapCount;
@@ -32,7 +35,7 @@ public class TutorialManager : MonoBehaviour
 
     #region Setters
 
-    public async Task SetTap(GameObject obj, bool isBlocking = false)
+    public async Task SetTap(GameObject obj, bool isBlocking = false, CancellationToken token = default)
     {
         Func<bool> clickCondition = null;
         var conditionDone = false;
@@ -57,10 +60,10 @@ public class TutorialManager : MonoBehaviour
             InteractionType = InteractionType.Tap,
             IsBlocking = isBlocking,
             TargetObject = obj
-        }, clickCondition);
+        }, clickCondition, token);
     }
 
-    public async Task SetFastTaps(GameObject obj, int tapThreshold, float timeWindow, bool isBlocking = false)
+    public async Task SetFastTaps(GameObject obj, int tapThreshold, float timeWindow, bool isBlocking = false, CancellationToken token = default)
     {
         tapTimeWindow = timeWindow;
         tapCount = 0;
@@ -69,20 +72,22 @@ public class TutorialManager : MonoBehaviour
             InteractionType = InteractionType.FastTaps,
             IsBlocking = isBlocking,
             TargetObject = obj
-        }, () => CheckFastTaps(obj, tapThreshold, timeWindow));
+        }, () => CheckFastTaps(obj, tapThreshold, timeWindow),
+        token);
     }
 
-    public async Task SetShake(GameObject obj, bool isBlocking = false)
+    public async Task SetShake(GameObject obj, bool isBlocking = false, CancellationToken token = default)
     {
         await HandleInteraction(new TutorialObject
         {
             InteractionType = InteractionType.Shake,
             IsBlocking = isBlocking,
             TargetObject = obj
-        }, () => CheckTap(obj));
+        }, () => CheckTap(obj),
+        token);
     }
 
-    public async Task SetSwipe(GameObject obj, Vector2 direction, float lenth, bool isBlocking = false)
+    public async Task SetSwipeAsync(GameObject obj, Vector2 direction, float lenth, bool isBlocking = false, CancellationToken token = default)
     {
         await HandleInteraction(new TutorialObject
         {
@@ -90,22 +95,24 @@ public class TutorialManager : MonoBehaviour
             IsBlocking = isBlocking,
             TargetObject = obj,
             swipeDirection = direction.normalized * lenth,
-        }, () => CheckSwipe(direction, lenth));
+        }, () => CheckSwipe(direction, lenth),
+        token);
     }
 
-    public async Task SetHold(GameObject obj, float seconds, bool isBlocking = false)
+    public async Task SetHoldAsync(GameObject obj, float seconds, bool isBlocking = false, CancellationToken token = default)
     {
         await HandleInteraction(new TutorialObject
         {
             InteractionType = InteractionType.Hold,
             IsBlocking = isBlocking,
             TargetObject = obj
-        }, () => CheckHold(obj, seconds));
+        }, () => CheckHold(obj, seconds),
+        token);
     }
 
     #endregion
 
-    private async Task HandleInteraction(TutorialObject tutorialObject, Func<bool> condition)
+    private async Task HandleInteraction(TutorialObject tutorialObject, Func<bool> condition, CancellationToken token = default)
     {
         if (tutorialObject.IsBlocking)
         {
@@ -118,7 +125,29 @@ public class TutorialManager : MonoBehaviour
         pointer.fingerAnimator.SetFloat("swipeX", tutorialObject.swipeDirection.x);
         pointer.fingerAnimator.SetFloat("swipeY", tutorialObject.swipeDirection.y);
 
-        await WaitForInteractionCompletion(condition);
+        while (!condition.Invoke()
+            && tutorialObject.TargetObject != null
+            && tutorialObject.TargetObject.gameObject.activeSelf
+            && !token.IsCancellationRequested)
+        {
+            if (CheckHold(tutorialObject.TargetObject))
+            {
+                if (pointer.gameObject.activeSelf)
+                {
+                    pointer.Hide();
+                }
+            }
+            else
+            {
+                if (!pointer.isActiveAndEnabled)
+                {
+                    pointer.Show(tutorialObject.TargetObject.transform, tutorialObject.InteractionType);
+                    pointer.fingerAnimator.SetFloat("swipeX", tutorialObject.swipeDirection.x);
+                    pointer.fingerAnimator.SetFloat("swipeY", tutorialObject.swipeDirection.y);
+                }
+            }
+            await Task.Yield();
+        }
 
 
         pointer.Hide();
@@ -130,17 +159,9 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    private async Task WaitForInteractionCompletion(Func<bool> condition)
-    {
-        while (!condition.Invoke())
-        {
-            await Task.Yield();
-        }
-    }
-
     private TutorialPointer PlayHandAnimation(InteractionType interactionType, GameObject targetObject)
     {
-        var pointer = pointersPool.FirstOrDefault(x => x.gameObject.activeSelf);
+        var pointer = pointersPool.FirstOrDefault(x => !x.isActiveAndEnabled);
         if (pointer == null)
         {
             pointer = Instantiate(pointerPrefab, tutorialCanvas.transform);
@@ -160,6 +181,15 @@ public class TutorialManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             return IsOverGameObject(obj);
+        }
+        return false;
+    }
+
+    private bool CheckHold(GameObject obj)
+    {
+        if (Input.GetMouseButton(0) && IsOverGameObject(obj))
+        {
+            return true;
         }
         return false;
     }
@@ -215,10 +245,10 @@ public class TutorialManager : MonoBehaviour
         {
             startPosition = Input.mousePosition;
         }
-        else if (Input.GetMouseButtonUp(0))
+        else if (startPosition.HasValue && Input.GetMouseButtonUp(0))
         {
             var endPosition = Input.mousePosition;
-            var swipe = endPosition - startPosition;
+            var swipe = endPosition - startPosition.Value;
             if (swipe.magnitude >= minSwipeDistance)
             {
                 var swipeDirection = swipe.normalized;
@@ -227,12 +257,33 @@ public class TutorialManager : MonoBehaviour
                     return true;
                 }
             }
+            startPosition = null;
         }
         return false;
     }
 
     private bool IsOverGameObject(GameObject target)
     {
+        if (target.GetComponent<RectTransform>() != null)
+        {
+            var pointerEventData = new PointerEventData(EventSystem.current)
+            {
+                position = Input.mousePosition
+            };
+
+            var raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerEventData, raycastResults);
+
+            foreach (var result in raycastResults)
+            {
+                if (result.gameObject == target)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out var hit))
         {
