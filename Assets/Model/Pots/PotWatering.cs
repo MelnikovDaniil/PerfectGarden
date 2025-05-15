@@ -30,12 +30,12 @@ public class PotWatering : MonoBehaviour
 
     private void OnParticleCollision(GameObject other)
     {
-        if (other.layer == waterLayer && wateringProgress < 1f)
+        if (other.layer == waterLayer && wateringProgress <= 1f)
         {
             currentWateringParticlesAmount++;
             wateringProgress = currentWateringParticlesAmount / targetWateringParticlesAmount;
             dirtRenderer.sharedMaterial.color = Color.HSVToRGB(0, 0, 1f - (wateringProgress) * targetWateringBrightness);
-            if (wateringProgress >= 1)
+            if (wateringProgress >= 1f)
             {
                 OnPlantWatered?.Invoke();
             }

@@ -22,6 +22,10 @@ public class WeedCareEventHandler : CareEventHandler
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
         state = Context.PotWithPlant.GetState<WeedCareState>();
+        foreach (var weed in state.weeds)
+        {
+            _ = TutorialManager.Instance.SetSwipeAsync(weed.gameObject, Vector2.up, 1f, false, token);
+        }
         pullingOutStarted = true;
         while (state.weedNumberLeft > 0)
         {

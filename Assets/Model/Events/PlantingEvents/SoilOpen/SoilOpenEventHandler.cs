@@ -55,6 +55,7 @@ public class SoilOpenPlantingEvent : PlantEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        _ = TutorialManager.Instance.SetSwipeAsync(slider.handleRect.gameObject, Vector2.right, 1f, false, token);
         while (!isOpened)
         {
             await Task.Yield();

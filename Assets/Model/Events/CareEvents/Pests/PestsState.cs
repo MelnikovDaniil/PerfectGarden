@@ -5,10 +5,10 @@ using UnityEngine;
 public class PestsState : CareState
 {
     public int wormNumberLeft;
+    public List<Worm> worms = new List<Worm>();
 
     private PestsScriptableStateInfo pestsStateInfo => (PestsScriptableStateInfo)StateInfo;
 
-    private List<Worm> worms = new List<Worm>();
 
     public PestsState(PestsScriptableStateInfo stateInfo) : base(stateInfo) { }
 

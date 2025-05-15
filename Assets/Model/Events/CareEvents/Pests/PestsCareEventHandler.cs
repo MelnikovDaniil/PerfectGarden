@@ -44,6 +44,10 @@ public class PestsCareEventHandler : CareEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        foreach (var worm in state.worms)
+        {
+            _ = TutorialManager.Instance.SetTap(worm.gameObject, false, token);
+        }
         pullingOutStarted = true;
         while (state.wormNumberLeft > 0)
         {

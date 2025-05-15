@@ -401,7 +401,7 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 2575313004398273568}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: swipeX
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
