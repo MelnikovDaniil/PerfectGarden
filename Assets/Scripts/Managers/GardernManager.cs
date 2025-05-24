@@ -1,3 +1,4 @@
+using Assets.Scripts.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ public class GardernManager : MonoBehaviour
         plantTypes = Resources.LoadAll<PlantInfo>("Plants").ToList();
     }
 
-    private void Start()
+    private async void Start()
     {
         LoadPlants();
         CareManager.Instance.GenerateCare(growingPlants);
@@ -64,6 +65,13 @@ public class GardernManager : MonoBehaviour
             }
             OnGardenOpen?.Invoke();
         };
+
+        if (!GuideMapper.IsGuideComplete(GuideStep.PlantPlaceSelection))
+        {
+            var plane = GameObject.FindGameObjectWithTag("plantPlace");
+            await TutorialManager.Instance.SetTap(plane, true);
+            GuideMapper.Complete(GuideStep.PlantPlaceSelection);
+        }
 
         var _ = StateChecking();
     }

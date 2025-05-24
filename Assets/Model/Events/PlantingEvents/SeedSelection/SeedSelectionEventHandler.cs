@@ -1,8 +1,11 @@
+using Assets.Scripts.Common;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SeedSelectionEventHandler : PlantEventHandler
 {
@@ -31,6 +34,12 @@ public class SeedSelectionEventHandler : PlantEventHandler
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
         selectionMenu.OpenCardsView();
+        if (!GuideMapper.IsGuideComplete(GuideStep.SeedSelection))
+        {
+            var purchaseButton = selectionMenu.GetComponentInChildren<ProductMiniCard>().GetComponentsInChildren<Button>().Last();
+            await TutorialManager.Instance.SetTap(purchaseButton.gameObject, true, token);
+            GuideMapper.Complete(GuideStep.SeedSelection);
+        }
         while (selectedSeed == null)
         {
             await Task.Yield();
