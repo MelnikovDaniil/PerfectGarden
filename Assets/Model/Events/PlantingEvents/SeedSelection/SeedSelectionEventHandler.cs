@@ -23,20 +23,22 @@ public class SeedSelectionEventHandler : PlantEventHandler
             .Select(plant => new ProductInfo(plant, plant.name, plant.shopSprite, plant.seedPrice, ProductMapper.GetAvaliableProducts(plant.name))).ToList();
     }
 
-    protected override Task PrepareHandlingAsync(CancellationToken token = default)
+    protected override async Task PrepareHandlingAsync(CancellationToken token = default)
     {
         selectedSeed = null;
         selectionMenu.GenerateCards(plantProducts);
         selectionMenu.OnProductSelection = (product) => { selectedSeed = product.GetProduct<PlantInfo>(); };
-        return base.PrepareHandlingAsync();
+        await Task.Yield();
+        await base.PrepareHandlingAsync();
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
         selectionMenu.OpenCardsView();
+        await Task.Yield();
         if (!GuideMapper.IsGuideComplete(GuideStep.SeedSelection))
         {
-            var purchaseButton = selectionMenu.GetComponentInChildren<ProductMiniCard>().GetComponentsInChildren<Button>().Last();
+            var purchaseButton = selectionMenu.GetComponentsInChildren<ProductMiniCard>().Last().GetComponentsInChildren<Button>().Last();
             await TutorialManager.Instance.SetTap(purchaseButton.gameObject, true, token);
             GuideMapper.Complete(GuideStep.SeedSelection);
         }

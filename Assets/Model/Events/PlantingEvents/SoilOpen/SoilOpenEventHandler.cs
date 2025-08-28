@@ -47,9 +47,12 @@ public class SoilOpenPlantingEvent : PlantEventHandler
     protected override async Task PrepareHandlingAsync(CancellationToken token = default)
     {
         isOpened = false;
+        progress = 0;
+        slider.value = 0;
         sliderCanvas.gameObject.SetActive(true);
         soilOpenAnimator.gameObject.SetActive(true);
         soilOpenAnimator.SetFloat("progress", 0);
+        await Task.Yield();
         await base.PrepareHandlingAsync();
     }
 
@@ -67,6 +70,7 @@ public class SoilOpenPlantingEvent : PlantEventHandler
     public override void Clear()
     {
         isOpened = false;
+        slider.value = 0;
         sliderCanvas.gameObject.SetActive(false);
         soilOpenAnimator.gameObject.SetActive(false);
         soilOpenAnimator.SetFloat("progress", 0);

@@ -9,11 +9,16 @@ public class Seed : MonoBehaviour
 
     private void Awake()
     {
-        transform.localPosition = Vector3.zero;
         seedRenderer = GetComponent<SpriteRenderer>();
         _rigidbody = GetComponent<Rigidbody>();
 
-        gameObject.SetActive(false);
+    }
+
+    public void Setup()
+    {
+        transform.localPosition = Vector3.zero;
+        gameObject.SetActive(true);
+        _rigidbody.isKinematic = true;
     }
 
     public void Drop()

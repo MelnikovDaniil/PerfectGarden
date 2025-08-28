@@ -13,13 +13,14 @@ public class SeedPackage : MonoBehaviour
     private void Awake()
     {
         _collider = GetComponent<SphereCollider>();
-        _seedPackageRenderer.enabled = true;
-        _collider.enabled = true;
     }
 
     public void SetUp(Sprite packageSprite, Sprite seedSprite)
     {
+        _seedPackageRenderer.enabled = true;
+        _collider.enabled = true;
         _seedPackageRenderer.sprite = packageSprite ?? _seedPackageRenderer.sprite;
+        _seed.Setup();
         _seed.seedRenderer.sprite = seedSprite ?? _seed.seedRenderer.sprite;
         _seed.transform.localPosition = Vector3.zero;
     }
@@ -31,7 +32,6 @@ public class SeedPackage : MonoBehaviour
             _unpackParticles.Play();
             _seedPackageRenderer.enabled = false;
             _seed.Drop();
-            _collider.enabled = false;
             interactable = false;
         }
     }
