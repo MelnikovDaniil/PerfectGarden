@@ -18,7 +18,7 @@ public class ProductMiniCard : MonoBehaviour
 
     public void CreateCard(ProductInfo productInfo)
     {
-        nameText.text = name;
+        nameText.text = productInfo.Name;
         itemsAvaliableText.enabled = false;
 
         previewImage.sprite = productInfo.Preview;

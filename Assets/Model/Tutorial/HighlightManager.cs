@@ -14,7 +14,7 @@ public class HighlightManager : MonoBehaviour
     private float aspectRatio;
     private Material cutoutMaterial;
 
-    void Start()
+    void Awake()
     {
         if (darkBackground == null)
         {
