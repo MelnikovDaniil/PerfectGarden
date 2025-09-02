@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 104f062b76d7d384d81d4369b1df137d, type: 3}
+  m_Name: Tulip
+  m_EditorClassIdentifier: 
+  name: Tulip
+  plantType: 0
+  plantingEvents: 000102030405
+  growStages:
+  - stagePlant: {fileID: 470696463028237617, guid: 3e769c00c191cef46991d764c36c2df9, type: 3}
+    requiredEvents: 00000000
+    optionalEvents:
+    - careEvent: 2
+      chance: 2
+    - careEvent: 3
+      chance: 1
+    - careEvent: 4
+      chance: 1
+  - stagePlant: {fileID: 8581087536866747957, guid: 1e2c3a58ee49edc4bafb0f85a65ee7cf, type: 3}
+    requiredEvents: 00000000
+    optionalEvents:
+    - careEvent: 3
+      chance: 1
+    - careEvent: 1
+      chance: 1
+    - careEvent: 2
+      chance: 1
+    - careEvent: 4
+      chance: 1
+  - stagePlant: {fileID: 1885567234826909660, guid: 06cf0021b51fb1044a5c972048c690aa, type: 3}
+    requiredEvents: 00000000
+    optionalEvents:
+    - careEvent: 3
+      chance: 1
+    - careEvent: 1
+      chance: 1
+    - careEvent: 2
+      chance: 1
+    - careEvent: 4
+      chance: 1
+  - stagePlant: {fileID: 4838141561655520341, guid: 95ea11a7ffec58b4bb27485c339adcbf, type: 3}
+    requiredEvents: 00000000
+    optionalEvents: []
+  rottenStage: {fileID: 2923515026974483440, guid: ecfef545f997380449532420d28a60a8, type: 3}
+  seedSprite: {fileID: 0}
+  packageSprite: {fileID: 0}
+  shopSprite: {fileID: -159018656, guid: 340f4dfaf1b3ec5478e7f301e68c9556, type: 3}
+  seedPrice: 10
