@@ -44,14 +44,12 @@ public class GardernManager : MonoBehaviour
         PlantingManager.OnPlantingFinished += potWithPlant =>
         {
             growingPlants.Add(potWithPlant);
-            gardenLocation.SetActive(true);
+            Open();
             PlacePlant(potWithPlant);
-            OnGardenOpen?.Invoke();
         };
 
-        CareManager.OnCareFinished += (plant) =>
+        CareManager.OnCareFinished = (plant) =>
         {
-            gardenLocation.SetActive(true);
             if (plant.gameObject.activeSelf)
             {
                 PlacePlant(plant);
@@ -63,7 +61,7 @@ public class GardernManager : MonoBehaviour
                 growingPlants.Remove(plant);
                 Destroy(plant.gameObject);
             }
-            OnGardenOpen?.Invoke();
+            Open();
         };
 
         if (!GuideMapper.IsGuideComplete(GuideStep.PlantPlaceSelection))
@@ -78,7 +76,7 @@ public class GardernManager : MonoBehaviour
 
     private async void Update()
     {
-        if (!CareManager.CareInProcess && Input.GetKeyUp(KeyCode.Mouse0))
+        if (gardenLocation.activeSelf && !CareManager.CareInProcess && Input.GetKeyUp(KeyCode.Mouse0))
         {
             var mousePos = Input.mousePosition;
             mousePos.z = 10;
@@ -104,19 +102,29 @@ public class GardernManager : MonoBehaviour
             }
         }
     }
+    
+    public void Open()
+    {
+        gardenLocation.SetActive(true);
+        OnGardenOpen?.Invoke();
+    }
+
+    public void Close()
+    {
+        gardenLocation.SetActive(false);
+        OnGardenClose?.Invoke();
+    }
 
     public async Task StartPlantingAsync(Vector3 tilePostion)
     {
-        gardenLocation.SetActive(false);
+        Close();
         await PlantingManager.Instance.StartPlanting(tilePostion);
-        OnGardenClose.Invoke();
     }
 
     public async Task StartCaringAsync(PotWithPlant potWithPlant)
     {
-        gardenLocation.SetActive(false);
+        Close();
         await CareManager.Instance.OpenCareMenu(potWithPlant);
-        OnGardenClose.Invoke();
     }
 
     private void PlacePlant(PotWithPlant potWithPlant)
@@ -158,9 +166,10 @@ public class GardernManager : MonoBehaviour
         var states = PlantStateInfoMapper.GetAllPlantStates();
         foreach (var state in states)
         {
-            var createdPotWithPlant = Instantiate(potWithPlantPrefab);
+            var potInfo = potTypes.First(x => x.name == state.potName);
+            var createdPotWithPlant = Instantiate(potInfo.potPrefab);
 
-            createdPotWithPlant.potInfo = potTypes.First(x => x.name == state.potName);
+            createdPotWithPlant.potInfo = potInfo;
             createdPotWithPlant.plantInfo = plantTypes.First(x => x.name == state.plantName);
             createdPotWithPlant.cell = state.cellPosition;
             createdPotWithPlant.waitingCareEvents = state.waitingCareEvents;

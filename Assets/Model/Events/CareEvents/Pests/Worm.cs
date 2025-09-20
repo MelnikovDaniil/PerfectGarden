@@ -28,7 +28,11 @@ public class Worm : MonoBehaviour
         {
             StopCoroutine(appearanceRoutine);
         }
-        appearanceRoutine = StartCoroutine(StartApperanceRoutine());
+
+        if (gameObject.activeInHierarchy)
+        {
+            appearanceRoutine = StartCoroutine(StartApperanceRoutine());
+        }
     }
 
     private IEnumerator StartApperanceRoutine()
