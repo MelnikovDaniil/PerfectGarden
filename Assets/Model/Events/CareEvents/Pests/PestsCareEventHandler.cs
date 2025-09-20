@@ -91,6 +91,7 @@ public class PestsCareEventHandler : CareEventHandler
     public override void Clear()
     {
         pincetInstance.gameObject.SetActive(false);
+        pincetInstance.transform.parent = transform;
         pullingOutStarted = false;
         CameraManager.Instanse.ReturnToOriginalPosition();
     }

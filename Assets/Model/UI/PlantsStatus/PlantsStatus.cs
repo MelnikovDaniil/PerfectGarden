@@ -30,6 +30,7 @@ public class PlantsStatusUI : MonoBehaviour
 
     private void ShowIcons()
     {
+        canvas.gameObject.SetActive(true);
         foreach (var plant in plants)
         {
             UpdateIconSprite(plant);
@@ -38,10 +39,7 @@ public class PlantsStatusUI : MonoBehaviour
 
     private void HideIcons()
     {
-        foreach (var icon in iconsPool)
-        {
-            icon.gameObject.SetActive(false);
-        }
+        canvas.gameObject.SetActive(false);
     }
 
     private void UpdateIconSprite(PotWithPlant plant)

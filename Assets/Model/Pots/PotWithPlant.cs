@@ -10,16 +10,24 @@ public class PotWithPlant : MonoBehaviour
 
     public Collider dirtCollider;
 
+    public bool IsOrder;
+
     public bool IsDied;
     public bool IsLastStage => plantInfo.growStages.Count == currentStage + 1;
-    public bool IsShouldBeRotted => DateTime.UtcNow.Date - lastStageChangeTime.Date >= TimeSpan.FromDays(3);
+    public bool IsShouldBeRotted => !IsOrder && DateTime.UtcNow.Date - lastStageChangeTime.Date >= TimeSpan.FromDays(3);
 
     /// <summary>
+    /// If it is order
     /// If plant was upgraded to new stage it will wait for timeBetweenStages to add new care events
     /// If plant was upgraded to new stage, has care and waiting for a one day, it will take more care events
     /// </summary>
     public bool IsNewCare()
     {
+        if (IsOrder)
+        {
+            return true;
+        }
+
         var speedGroBuff  = GetBuffState<SpeedGroBuffState>(BuffType.SpeedGro);
         //var timeBetweenStages = plantInfo.timeBetweenStages * ( != null ? 0.5f : 1f);
         var nextStageDate = speedGroBuff != null ? speedGroBuff.endDate : lastStageChangeTime + plantInfo.timeBetweenStages;

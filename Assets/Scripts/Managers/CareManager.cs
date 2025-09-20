@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 public class CareManager : MonoBehaviour
 {
-    public static event Action<PotWithPlant> OnCareFinished;
+    public static Action<PotWithPlant> OnCareFinished;
 
     public static CareManager Instance;
 
@@ -162,9 +162,17 @@ public class CareManager : MonoBehaviour
 
             if (!currentPlant.waitingCareEvents.Any())
             {
-                RewardManager.Instance.GenerateCareLargeReward();
-                currentPlant.UpdateStageChangeTime();
-                currentPlant.SetStage(++currentPlant.currentStage);
+                if (!currentPlant.IsOrder)
+                {
+                    RewardManager.Instance.GenerateCareLargeReward();
+                    currentPlant.UpdateStageChangeTime();
+                    currentPlant.SetStage(++currentPlant.currentStage);
+                }
+                else
+                {
+                    FinishCare();
+                    return;
+                }
             }
             else
             {
