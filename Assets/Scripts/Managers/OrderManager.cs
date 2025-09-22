@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,20 +8,21 @@ using Random = UnityEngine.Random;
 public class OrderManager : MonoBehaviour
 {
     public static OrderManager Instance;
+    public static event Action<Order> OnOrderAdded;
+    public static event Action<Order> OnOrderСomplete;
     public static event Action<Order> OnOrderPlaced;
     public static event Action OnAllOrdersComplete;
     public PotWithPlant potWithPlantPrefab;
     public GameObject location;
     public Transform plantPlace;
     public int maxOrderNumber;
-    public float orderGenerationInterval = 300f;
+    public int orderGenerationInterval = 300;
 
     [NonSerialized] private Order currentOrder;
     private readonly List<Order> orders = new List<Order>();
     private List<PlantInfo> plants;
     private List<PotInfo> pots;
     private DateTime lastOrderGenerationTime;
-    private bool isTimerActive = false;
 
 
     // Teplates for description
@@ -77,19 +78,15 @@ public class OrderManager : MonoBehaviour
 
     private async Task StartOrderGenerationTimerAsync()
     {
-        isTimerActive = true;
-        await CheckPendingOrdersAsync();
-    }
-
-    private void StopOrderGenerationTimer()
-    {
-        isTimerActive = false;
+        while (true)
+        {
+            await CheckPendingOrdersAsync();
+            await Task.Delay(orderGenerationInterval);
+        }
     }
 
     private async Task CheckPendingOrdersAsync()
     {
-        if (!isTimerActive) return;
-
         var timeSinceLastGeneration = DateTime.Now - lastOrderGenerationTime;
         var intervalsPassed = (int)(timeSinceLastGeneration.TotalSeconds / orderGenerationInterval);
 
@@ -105,12 +102,6 @@ public class OrderManager : MonoBehaviour
             lastOrderGenerationTime = DateTime.Now;
             SaveOrders();
         }
-
-        await Task.Delay(60000);
-        if (isTimerActive)
-        {
-            await CheckPendingOrdersAsync();
-        }
     }
 
     private async Task AddOrderByTimer()
@@ -119,6 +110,7 @@ public class OrderManager : MonoBehaviour
 
         var newOrder = GenerateOrder();
         orders.Add(newOrder);
+        OnOrderAdded.Invoke(newOrder);
         lastOrderGenerationTime = DateTime.Now;
 
         Debug.Log($"New order added by timer: {newOrder.Name}");
@@ -134,6 +126,7 @@ public class OrderManager : MonoBehaviour
         {
             var newOrder = GenerateOrder();
             orders.Add(newOrder);
+            OnOrderAdded.Invoke(newOrder);
         }
         lastOrderGenerationTime = DateTime.Now;
         SaveOrders();
@@ -141,7 +134,6 @@ public class OrderManager : MonoBehaviour
 
     private Order GenerateOrder()
     {
-
         var plantInfo = plants.GetRandom();
         var potInfo = pots.GetRandom();
         var stage = Random.Range(0, plantInfo.growStages.Count - 1);
@@ -176,11 +168,10 @@ public class OrderManager : MonoBehaviour
                 RewardManager.Instance.GenerateCareLargeReward();
                 Destroy(currentOrder.PotWithPlant.gameObject);
                 orders.Remove(currentOrder);
+                OnOrderСomplete.Invoke(currentOrder);
                 currentOrder = null;
 
                 SaveOrders();
-
-                await CheckPendingOrdersAsync();
             }
             Open();
         };
@@ -188,7 +179,7 @@ public class OrderManager : MonoBehaviour
         await CareManager.Instance.OpenCareMenu(currentOrder.PotWithPlant);
     }
 
-    private void PlaceOrder(Order order)
+    public void PlaceOrder(Order order)
     {
         // Place selected Order on table
         // Setup button
