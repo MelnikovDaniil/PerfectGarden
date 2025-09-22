@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 public class CareManager : MonoBehaviour
 {
     public static Action<PotWithPlant> OnCareFinished;
+    public static Action OnCareMenuOpen;
+    public static Action OnCareMenuClosed;
 
     public static CareManager Instance;
 
@@ -121,6 +123,7 @@ public class CareManager : MonoBehaviour
 
         CareCanvas.ShowMenu(currentPlant);
         CareCanvas.OnBackPressed = FinishCare;
+        OnCareMenuOpen.Invoke();
     }
 
     public void UpdateMenu()
@@ -226,6 +229,7 @@ public class CareManager : MonoBehaviour
         CareInProcess = false;
         currentPlant.transform.parent = null;
         currentPlant = null;
+        OnCareMenuClosed.Invoke();
     }
 
     private void SetupPlant(PotWithPlant potWithPlant)
