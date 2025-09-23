@@ -19,4 +19,21 @@ public static class MoneyMapper
     {
         PlayerPrefs.SetInt(MapperName, money);
     }
+
+    public static int GetHighestReward()
+    {
+        return PlayerPrefs.GetInt(MapperName + "Record", 0);
+    }
+
+    public static bool TrySetNewHighestReward(int money)
+    {
+        var existingRecord = PlayerPrefs.GetInt(MapperName + "Record", 0);
+        if (money > existingRecord)
+        {
+            Debug.Log($"New record {money}");
+            PlayerPrefs.SetInt(MapperName + "Record", money);
+            return true;
+        }
+        return false;
+    }
 }
