@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static TMPro.TMP_Dropdown;
 
 public class OrderManagerUI : MonoBehaviour
 {
@@ -22,8 +21,11 @@ public class OrderManagerUI : MonoBehaviour
         };
         CareManager.OnCareMenuClosed += () =>
         {
-            ordersDropdown.gameObject.SetActive(true);
-            careButton.gameObject.SetActive(true);
+            if (currentOrders.Any())
+            {
+                ordersDropdown.gameObject.SetActive(true);
+                careButton.gameObject.SetActive(true);
+            }
         };
         OrderManager.OnOrderAdded += AddOrderToDropdown;
         OrderManager.OnOrderAdded += (order) => ordersDropdown.gameObject.SetActive(true);
@@ -45,8 +47,13 @@ public class OrderManagerUI : MonoBehaviour
             await OrderManager.Instance.StartOrderAsync();
         });
         ordersDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
+    }
+
+    private void Start()
+    {
         UpdateDropdownOptions();
     }
+
     private void OnDropdownValueChanged(int index)
     {
         if (isDropdownUpdateInProgress || index < 0 || index >= currentOrders.Count)
