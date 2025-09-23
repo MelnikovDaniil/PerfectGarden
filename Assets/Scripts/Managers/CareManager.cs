@@ -44,6 +44,7 @@ public class CareManager : MonoBehaviour
         foreach (var potWithPlant in potWithPlants.Where(x => !x.IsDied))
         {
             if (!potWithPlant.IsShouldBeRotted)
+
             {
                 if (potWithPlant.IsNewCare() && !potWithPlant.IsLastStage)
                 {
@@ -58,16 +59,21 @@ public class CareManager : MonoBehaviour
                     potWithPlant.lastCareAddedTime = DateTime.UtcNow;
                 }
 
-                foreach (var careEvent in potWithPlant.waitingCareEvents.Where(careEvent => potWithPlant.GetState(careEvent) == null))
-                {
-                    stateInfos.Find(stateInfo => stateInfo.EvenName == careEvent)?.Apply(potWithPlant);
-
-                }
+                GenerateStates(potWithPlant);
             }
             else
             {
                 potWithPlant.Rot();
             }
+        }
+    }
+
+    public void GenerateStates(PotWithPlant potWithPlant)
+    {
+        foreach (var careEvent in potWithPlant.waitingCareEvents.Where(careEvent => potWithPlant.GetState(careEvent) == null))
+        {
+            stateInfos.Find(stateInfo => stateInfo.EvenName == careEvent)?.Apply(potWithPlant);
+
         }
     }
 
@@ -229,7 +235,7 @@ public class CareManager : MonoBehaviour
         CareInProcess = false;
         currentPlant.transform.parent = null;
         currentPlant = null;
-        OnCareMenuClosed.Invoke();
+        OnCareMenuClosed?.Invoke();
     }
 
     private void SetupPlant(PotWithPlant potWithPlant)

@@ -12,7 +12,6 @@ public class OrderManager : MonoBehaviour
     public static event Action<Order> OnOrderСomplete;
     public static event Action<Order> OnOrderPlaced;
     public static event Action OnAllOrdersComplete;
-    public PotWithPlant potWithPlantPrefab;
     public GameObject location;
     public Transform plantPlace;
     public int maxOrderNumber;
@@ -20,8 +19,8 @@ public class OrderManager : MonoBehaviour
 
     [NonSerialized] private Order currentOrder;
     private readonly List<Order> orders = new List<Order>();
-    private List<PlantInfo> plants;
-    private List<PotInfo> pots;
+    private List<PlantInfo> plantTypes;
+    private List<PotInfo> potTypes;
     private DateTime lastOrderGenerationTime;
 
 
@@ -43,13 +42,13 @@ public class OrderManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        plants = Resources.LoadAll<PlantInfo>("Plants").ToList();
-        pots = Resources.LoadAll<PotInfo>("Pots").ToList();
-        //GenerateOrders();
-        LoadOrders();
+        plantTypes = Resources.LoadAll<PlantInfo>("Plants").ToList();
+        potTypes = Resources.LoadAll<PotInfo>("Pots").ToList();
     }
+
     private async void Start()
     {
+        LoadOrders();
         await StartOrderGenerationTimerAsync();
     }
 
@@ -134,8 +133,8 @@ public class OrderManager : MonoBehaviour
 
     private Order GenerateOrder()
     {
-        var plantInfo = plants.GetRandom();
-        var potInfo = pots.GetRandom();
+        var plantInfo = plantTypes.GetRandom();
+        var potInfo = potTypes.GetRandom();
         var stage = Random.Range(0, plantInfo.growStages.Count - 1);
 
         var generatedPlant = Instantiate(potInfo.potPrefab);
@@ -181,8 +180,6 @@ public class OrderManager : MonoBehaviour
 
     public void PlaceOrder(Order order)
     {
-        // Place selected Order on table
-        // Setup button
         foreach (Transform item in plantPlace)
         {
             item.gameObject.SetActive(false);
@@ -198,29 +195,59 @@ public class OrderManager : MonoBehaviour
 
     private int CalculateCost()
     {
-        // Add balance calculation of the cost depending on the plant seed cost
-        // Hardcoder for now
         return 100;
     }
 
     private void LoadOrders()
     {
-        if (PlayerPrefs.HasKey("LastOrderGenerationTime"))
+        lastOrderGenerationTime = OrderMapper.GetLastGenerationTime();
+        var orderSaves = OrderMapper.GetAllOrders();
+        foreach (var orderSave in orderSaves)
         {
-            var ticks = long.Parse(PlayerPrefs.GetString("LastOrderGenerationTime"));
-            lastOrderGenerationTime = new DateTime(ticks);
+            var potInfo = potTypes.First(x => x.name == orderSave.potName);
+            var plantInfo = plantTypes.First(x => x.name == orderSave.plantName);
+            var createdPotWithPlant = Instantiate(potInfo.potPrefab);
+            createdPotWithPlant.plantInfo = plantInfo;
+            createdPotWithPlant.potInfo = potInfo;
+            createdPotWithPlant.waitingCareEvents = orderSave.waitingCareEvents;
+            createdPotWithPlant.IsOrder = true;
+            createdPotWithPlant.SetStage(orderSave.stage);
+            CareManager.Instance.GenerateStates(createdPotWithPlant);
+            createdPotWithPlant.gameObject.SetActive(false);
+
+            var order = new Order
+            {
+                Name = orderSave.plantName,
+                Description = orderSave.description,
+                PotWithPlant = createdPotWithPlant,
+                Reward = orderSave.reward,
+            };
+
+            orders.Add(order);
+            OnOrderAdded?.Invoke(order);
         }
-        else
-        {
-            lastOrderGenerationTime = DateTime.Now;
-        }
-        // Loading orders and generate new for the time that user was apsent
     }
 
     private void SaveOrders()
     {
-        PlayerPrefs.SetString("LastOrderGenerationTime", lastOrderGenerationTime.Ticks.ToString());
-        // Save existing orders in they state
-        PlayerPrefs.Save();
+        OrderMapper.SaveLastGenerationTime(lastOrderGenerationTime);
+        var saves = orders.Select(order =>
+            new OrderSaveInfo
+            {
+                description = order.Description,
+                orderName = order.Name,
+                stage = order.PotWithPlant.currentStage,
+                plantName = order.PotWithPlant.plantInfo.name,
+                potName = order.PotWithPlant.potInfo.name,
+                waitingCareEvents = order.PotWithPlant.waitingCareEvents,
+                reward = order.Reward,
+            }).ToList();
+
+        OrderMapper.SaveOrders(saves);
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveOrders();
     }
 }
