@@ -116,6 +116,7 @@ public class CareManager : MonoBehaviour
         currentPlant.gameObject.SetActive(false);
         await Task.Delay(2000);
         MoneyMapper.Money += currentPlant.plantInfo.plantPrice;
+        MoneyMapper.TrySetNewHighestReward(currentPlant.plantInfo.plantPrice);
         FinishCare();
     }
 

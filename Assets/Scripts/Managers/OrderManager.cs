@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 using Random = UnityEngine.Random;
 
 public class OrderManager : MonoBehaviour
@@ -17,11 +20,20 @@ public class OrderManager : MonoBehaviour
     public int maxOrderNumber;
     public int orderGenerationInterval = 300;
 
+    [Space]
+    [Header("Reward settings")]
+    [Range(0f, 1f)]
+    public float minRewardCostFromHighest = 0.08f;
+    [Range(0f, 1f)]
+    public float maxRewardCostFromHighest = 0.12f;
+
+
     [NonSerialized] private Order currentOrder;
     private readonly List<Order> orders = new List<Order>();
     private List<PlantInfo> plantTypes;
     private List<PotInfo> potTypes;
     private DateTime lastOrderGenerationTime;
+    private CancellationTokenSource orderGenerationTokenSource;
 
 
     // Teplates for description
@@ -42,6 +54,11 @@ public class OrderManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        orderGenerationTokenSource = new CancellationTokenSource();
+        if (minRewardCostFromHighest > maxRewardCostFromHighest)
+        {
+            throw new ArgumentException("Min reward cost cannot be higher than max");
+        }
         plantTypes = Resources.LoadAll<PlantInfo>("Plants").ToList();
         potTypes = Resources.LoadAll<PotInfo>("Pots").ToList();
     }
@@ -49,7 +66,7 @@ public class OrderManager : MonoBehaviour
     private async void Start()
     {
         LoadOrders();
-        await StartOrderGenerationTimerAsync();
+        await StartOrderGenerationTimerAsync(orderGenerationTokenSource.Token);
     }
 
     public void Open()
@@ -75,16 +92,16 @@ public class OrderManager : MonoBehaviour
         location.SetActive(false);
     }
 
-    private async Task StartOrderGenerationTimerAsync()
+    private async Task StartOrderGenerationTimerAsync(CancellationToken token = default)
     {
-        while (true)
+        while (!token.IsCancellationRequested)
         {
             await CheckPendingOrdersAsync();
-            await Task.Delay(orderGenerationInterval);
+            await Task.Delay(orderGenerationInterval, token);
         }
     }
 
-    private async Task CheckPendingOrdersAsync()
+    private async Task CheckPendingOrdersAsync(CancellationToken token = default)
     {
         var timeSinceLastGeneration = DateTime.Now - lastOrderGenerationTime;
         var intervalsPassed = (int)(timeSinceLastGeneration.TotalSeconds / orderGenerationInterval);
@@ -95,7 +112,8 @@ public class OrderManager : MonoBehaviour
 
             for (int i = 0; i < ordersToAdd; i++)
             {
-                await AddOrderByTimer();
+                if (token.IsCancellationRequested) return;
+                await AddOrderByTimerAsync(token);
             }
 
             lastOrderGenerationTime = DateTime.Now;
@@ -103,9 +121,9 @@ public class OrderManager : MonoBehaviour
         }
     }
 
-    private async Task AddOrderByTimer()
+    private async Task AddOrderByTimerAsync(CancellationToken token = default)
     {
-        if (orders.Count >= maxOrderNumber) return;
+        if (token.IsCancellationRequested && orders.Count >= maxOrderNumber) return;
 
         var newOrder = GenerateOrder();
         orders.Add(newOrder);
@@ -163,7 +181,7 @@ public class OrderManager : MonoBehaviour
         {
             if (plant.waitingCareEvents.Count == 0)
             {
-                //MoneyMapper.Money += currentOrder.Reward;
+                MoneyMapper.Money += currentOrder.Reward;
                 RewardManager.Instance.GenerateCareLargeReward();
                 Destroy(currentOrder.PotWithPlant.gameObject);
                 orders.Remove(currentOrder);
@@ -195,7 +213,11 @@ public class OrderManager : MonoBehaviour
 
     private int CalculateCost()
     {
-        return 100;
+        // Probably change to the most expencive seed cost instead most expensive sale
+        var rewardPart = Random.Range(minRewardCostFromHighest, maxRewardCostFromHighest);
+        var reward = (int)(MoneyMapper.GetHighestReward() * rewardPart);
+
+        return reward == 0 ? Random.Range(1, 4) : reward;
     }
 
     private void LoadOrders()
@@ -248,6 +270,7 @@ public class OrderManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        orderGenerationTokenSource.Cancel();
         SaveOrders();
     }
 }
