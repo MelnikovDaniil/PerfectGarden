@@ -11,7 +11,7 @@ public class WeedScriptableStateInfo : ScriptableCareStateInfo
 
     public override CareEvent EvenName => CareEvent.Weed;
 
-    public override CareState CreateState()
+    public override State<CareEvent> CreateState()
     {
         return new WeedCareState(this);
     }

@@ -26,13 +26,13 @@ public class ShakeSoilPlantEvent : PlantEventHandler
         shakingSoil.transform.localRotation = Quaternion.identity;
 
         potFillingAnimator.gameObject.SetActive(true);
-        Context.PotWithPlant.potDirtFilling.StartFilling();
 
         await AnimatorHelper.PlayAnimationForTheEndAsync(potFillingAnimator, "Appearance");
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        Context.PotWithPlant.potDirtFilling.StartFilling();
         shakingSoil.StartShaking();
         _ = TutorialManager.Instance.SetShake(shakingSoil.gameObject, false, token);
         Context.PotWithPlant.potDirtFilling.OnPotFill += () => { potFilled = true; };

@@ -1,9 +1,11 @@
-﻿using Unity.VisualScripting;
+﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class WateringState : CareState
+public class WateringState<TEvent> : State<TEvent>
+    where TEvent : Enum
 {
-    private WateringStateScriptableStateInfo wateringStateInfo => (WateringStateScriptableStateInfo)StateInfo;
+    private WateringScriptableStateInfo<TEvent> wateringStateInfo => (WateringScriptableStateInfo<TEvent>)StateInfo;
     public float wateringProgress;
 
     private ParticleSystem createdDustParticles;
@@ -14,7 +16,7 @@ public class WateringState : CareState
 
     private float currentWateringParticlesAmount;
 
-    public WateringState(WateringStateScriptableStateInfo stateInfo) : base(stateInfo) { }
+    public WateringState(WateringScriptableStateInfo<TEvent> stateInfo) : base(stateInfo) { }
 
     public override void Apply(PotWithPlant potWhithPlant)
     {
@@ -38,7 +40,8 @@ public class WateringState : CareState
     {
         GameObject.Destroy(createdDustParticles.gameObject);
         GameObject.Destroy(hitTracker);
-        plant.plantRenderer.material = originalMaterial;
+        dirtMesh.material = originalMaterial;
+        dirtMesh.material.SetColor("_BaseColor", new Color(0.25f, 0.25f, 0.25f));
     }
 
     private void OnParticleHit(GameObject other)
@@ -47,7 +50,7 @@ public class WateringState : CareState
         {
             currentWateringParticlesAmount++;
             wateringProgress = currentWateringParticlesAmount / wateringStateInfo.targetWateringParticlesAmount;
-            var color = Color.Lerp(wateringStateInfo.dryColor, Color.white, wateringProgress);
+            var color = Color.Lerp(wateringStateInfo.dryColor, new Color(0.25f, 0.25f, 0.25f), wateringProgress);
             dirtMesh.material.SetColor("_BaseColor", color);
             if (wateringProgress >= 1f)
             {

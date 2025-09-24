@@ -9,7 +9,7 @@ public class HydrationScriptableStateInfo : ScriptableCareStateInfo
     public ParticleSystem DustParticlesPrefab;
     public Vector3 dustOffset = new Vector3(0, 0.2f, 0);
 
-    public override CareState CreateState()
+    public override State<CareEvent> CreateState()
     {
         return new HydrationState(this);
     }

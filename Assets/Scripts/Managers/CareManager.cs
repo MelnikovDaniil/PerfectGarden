@@ -16,7 +16,7 @@ public class CareManager : MonoBehaviour
 
     public static bool CareInProcess;
 
-    public List<ScriptableCareStateInfo> stateInfos;
+    public List<ScriptableStateInfo<CareEvent>> stateInfos;
 
     [SerializeField] private CareMenu CareCanvas;
 

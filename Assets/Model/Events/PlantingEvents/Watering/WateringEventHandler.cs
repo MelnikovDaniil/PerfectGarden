@@ -10,11 +10,11 @@ public class WateringEventHandler : PlantEventHandler
     public WateringCan wateringCan;
     public Transform potTransformParent;
 
-    private bool plantWatered;
+    private WateringState<PlantingEvent> state;
 
     protected override async Task PrepareHandlingAsync(CancellationToken token = default)
     {
-        plantWatered = false;
+        state = Context.PotWithPlant.GetState<WateringState<PlantingEvent>>();
         Context.PotWithPlant.gameObject.SetActive(true);
         Context.PotWithPlant.transform.parent = potTransformParent;
         Context.PotWithPlant.transform.localPosition = Vector3.zero;
@@ -25,7 +25,6 @@ public class WateringEventHandler : PlantEventHandler
         wateringCan.transform.localPosition = Vector3.zero;
 
         waterignAnimator.gameObject.SetActive(true);
-        //Context.PotWithPlant.potWatering.StartWatering();
 
         await AnimatorHelper.PlayAnimationForTheEndAsync(waterignAnimator, "Appearance");
     }
@@ -34,10 +33,14 @@ public class WateringEventHandler : PlantEventHandler
     {
         _ = TutorialManager.Instance.SetHoldAsync(wateringCan.gameObject, 1f, false, token);
         wateringCan.StartWaterging();
-        //Context.PotWithPlant.potWatering.OnPlantWatered = () => { plantWatered = true; };
 
-        while (!plantWatered)
+        while (state.wateringProgress < 1f)
         {
+            if (token.IsCancellationRequested)
+            {
+                await InterruptAsync();
+                return;
+            }
             await Task.Yield();
         }
     }

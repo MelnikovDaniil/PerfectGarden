@@ -1,18 +1,18 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "WateringStateStateInfo", menuName = "States/WateringState")]
-public class WateringStateScriptableStateInfo : ScriptableCareStateInfo
+public abstract class WateringScriptableStateInfo<TEvent> : ScriptableStateInfo<TEvent>
+    where TEvent : Enum
 {
-    public override CareEvent EvenName => CareEvent.Watering;
-
     [Space]
     public float targetWateringParticlesAmount = 70;
     public float targetWateringBrightness = 0.5f;
     public ParticleSystem DustParticlesPrefab;
-    public Color dryColor = new Color(1.5f, 1.5f, 1.5f);
+    public Color dryColor = new Color(1f, 1f, 1f);
 
-    public override CareState CreateState()
+    public override State<TEvent> CreateState()
     {
-        return new WateringState(this);
+        return new WateringState<TEvent>(this);
     }
 }
