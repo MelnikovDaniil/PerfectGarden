@@ -25,7 +25,7 @@ public class WateringEventHandler : PlantEventHandler
         wateringCan.transform.localPosition = Vector3.zero;
 
         waterignAnimator.gameObject.SetActive(true);
-        Context.PotWithPlant.potWatering.StartWatering();
+        //Context.PotWithPlant.potWatering.StartWatering();
 
         await AnimatorHelper.PlayAnimationForTheEndAsync(waterignAnimator, "Appearance");
     }
@@ -34,7 +34,7 @@ public class WateringEventHandler : PlantEventHandler
     {
         _ = TutorialManager.Instance.SetHoldAsync(wateringCan.gameObject, 1f, false, token);
         wateringCan.StartWaterging();
-        Context.PotWithPlant.potWatering.OnPlantWatered = () => { plantWatered = true; };
+        //Context.PotWithPlant.potWatering.OnPlantWatered = () => { plantWatered = true; };
 
         while (!plantWatered)
         {

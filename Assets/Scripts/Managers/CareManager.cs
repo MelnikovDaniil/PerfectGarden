@@ -73,7 +73,6 @@ public class CareManager : MonoBehaviour
         foreach (var careEvent in potWithPlant.waitingCareEvents.Where(careEvent => potWithPlant.GetState(careEvent) == null))
         {
             stateInfos.Find(stateInfo => stateInfo.EvenName == careEvent)?.Apply(potWithPlant);
-
         }
     }
 

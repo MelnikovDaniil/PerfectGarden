@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2641384167048222160}
   - component: {fileID: 3957984063163282306}
   - component: {fileID: 7686617431984513681}
-  - component: {fileID: 562632057294316709}
   - component: {fileID: 275332667405486554}
   m_Layer: 0
   m_Name: CommonPot2
@@ -50,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dirtCollider: {fileID: 1452612364044841864}
+  IsOrder: 0
   IsDied: 0
   plantPlace: {fileID: 324327969626017564}
   potBottomPostionY: 0
@@ -69,21 +69,6 @@ MonoBehaviour:
   dirtMinY: 0
   dirtMaxY: 0.22
   targetFillParticlesAmount: 100
---- !u!114 &562632057294316709
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 139431234288051957}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 858c1ad9e0c6329488ed9ac2bcacc938, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetWateringParticlesAmount: 70
-  targetWateringBrightness: 0.5
-  dirtRenderer: {fileID: 6780229523515891569}
 --- !u!54 &275332667405486554
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -332,10 +317,5 @@ BoxCollider:
 --- !u!4 &5643883382788596766 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bb4f406ccbd6811498421c582a8f9a52, type: 3}
-  m_PrefabInstance: {fileID: 5321464160949978101}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &6780229523515891569 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: bb4f406ccbd6811498421c582a8f9a52, type: 3}
   m_PrefabInstance: {fileID: 5321464160949978101}
   m_PrefabAsset: {fileID: 0}
