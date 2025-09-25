@@ -644,6 +644,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 3803359362450911390, guid: 1ddce49d4320612488a565cbdbf2b909, type: 3}
+      propertyPath: splashParticles
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4842494598498590504, guid: 1ddce49d4320612488a565cbdbf2b909, type: 3}
       propertyPath: ShapeModule.type
       value: 4

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -8,7 +9,8 @@ public class WateringState<TEvent> : State<TEvent>
     private WateringScriptableStateInfo<TEvent> wateringStateInfo => (WateringScriptableStateInfo<TEvent>)StateInfo;
     public float wateringProgress;
 
-    private ParticleSystem createdDustParticles;
+    private ParticleSystem dustParticles;
+    private ParticleSystem splashParticles;
     private ParticleHitTracker hitTracker;
     private MeshRenderer dirtMesh;
     private Material originalMaterial;
@@ -23,7 +25,8 @@ public class WateringState<TEvent> : State<TEvent>
         waterLayer  = LayerMask.NameToLayer("WaterParticles");
         currentWateringParticlesAmount = 0;
         wateringProgress = 0;
-        createdDustParticles = GameObject.Instantiate(wateringStateInfo.DustParticlesPrefab, potWhithPlant.dirtCollider.transform);
+        dustParticles = GameObject.Instantiate(wateringStateInfo.DustParticlesPrefab, potWhithPlant.dirtCollider.transform);
+        splashParticles = GameObject.Instantiate(wateringStateInfo.splashParticlesPrefab, potWhithPlant.dirtCollider.transform);
         dirtMesh = potWhithPlant.dirtCollider.GetComponent<MeshRenderer>();
         originalMaterial = dirtMesh.material;
 
@@ -38,7 +41,8 @@ public class WateringState<TEvent> : State<TEvent>
 
     public override void Complete(PotWithPlant plant)
     {
-        GameObject.Destroy(createdDustParticles.gameObject);
+        GameObject.Destroy(dustParticles.gameObject);
+        GameObject.Destroy(splashParticles.gameObject);
         GameObject.Destroy(hitTracker);
         dirtMesh.material = originalMaterial;
         dirtMesh.material.SetColor("_BaseColor", new Color(0.25f, 0.25f, 0.25f));
@@ -48,6 +52,16 @@ public class WateringState<TEvent> : State<TEvent>
     {
         if (other.layer == waterLayer && wateringProgress <= 1f)
         {
+            var collisionEvents = new List<ParticleCollisionEvent>();
+            var particleSystem = other.GetComponent<ParticleSystem>();
+            var numCollisionEvents = particleSystem.GetCollisionEvents(dirtMesh.gameObject, collisionEvents);
+            for (int i = 0; i < numCollisionEvents; i++)
+            {
+                Vector3 collisionPoint = collisionEvents[i].intersection;
+                splashParticles.transform.position = collisionPoint;
+                splashParticles.Emit(3);
+            }
+
             currentWateringParticlesAmount++;
             wateringProgress = currentWateringParticlesAmount / wateringStateInfo.targetWateringParticlesAmount;
             var color = Color.Lerp(wateringStateInfo.dryColor, new Color(0.25f, 0.25f, 0.25f), wateringProgress);
