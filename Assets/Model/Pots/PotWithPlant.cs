@@ -38,7 +38,6 @@ public class PotWithPlant : MonoBehaviour
 
     [NonSerialized] public Renderer plantRenderer;
     [NonSerialized] public PotDirtFilling potDirtFilling;
-    [NonSerialized] public PotWatering potWatering;
 
     [NonSerialized] public PlantInfo plantInfo;
     [NonSerialized] public PotInfo potInfo;
@@ -61,17 +60,17 @@ public class PotWithPlant : MonoBehaviour
     [NonSerialized]
     public int currentStage;
 
-    private List<CareState> careStates;
+    private List<IState> states;
     private List<BuffState> buffStates;
 
 
     private void Awake()
     {
         plantPlace.gameObject.SetActive(false);
-        careStates = new List<CareState>();
+        states = new List<IState>();
         buffStates = new List<BuffState>();
         potDirtFilling = GetComponent<PotDirtFilling>();
-        potWatering = GetComponent<PotWatering>();
+        dirtCollider.GetComponent<MeshRenderer>().material.color = new Color(0.25f, 0.25f, 0.25f);
     }
 
     public void SetStage(int plantStage)
@@ -104,39 +103,71 @@ public class PotWithPlant : MonoBehaviour
         lastStageChangeTime = DateTime.UtcNow;
     }
 
-    #region CareState
-    public void AddCareState(CareState state)
+    #region State
+    public void AddState<TEvent>(State<TEvent> state) where TEvent : Enum
     {
-        careStates.Add(state);
+        states.Add(state);
         state.Apply(this);
     }
 
-    public T GetState<T>() where T : CareState
+    public T GetState<T>() where T : IState
     {
-        return (T)careStates.Find(x => x.GetType() == typeof(T));
+        return (T)states.Find(x => x is T);
     }
 
-    public T GetState<T>(CareEvent careEvent) where T : CareState
+    public T GetState<T, TEvent>(TEvent careEvent) where T : State<TEvent> where TEvent : Enum
     {
-        return (T)careStates.Find(x => x.eventName == careEvent);
+        return (T)states.Find(x => x is State<TEvent> state &&
+                                      state.EventName.Equals(careEvent));
     }
 
+    public IState GetState<TEvent>(TEvent careEvent) where TEvent : Enum
+    {
+        return states.Find(x => x is State<TEvent> state &&
+                                   state.EventName.Equals(careEvent));
+    }
+
+    public IState GetState(Enum careEvent)
+    {
+        return states.Find(x => x.EventName.Equals(careEvent));
+    }
+
+    ///// <summary>
+    ///// Only searching by CareEvents
+    ///// </summary>
+    ///// <param name="careEvent"></param>
+    ///// <returns></returns>
     public CareState GetState(CareEvent careEvent)
     {
-        return careStates.Find(x => x.eventName == careEvent);
+        return (CareState)states.Find(x => x is CareState state &&
+                                   state.EventName.Equals(careEvent));
     }
 
-    public void CompleteState(CareEvent careEvent)
+    public void CompleteState<TEvent>(TEvent careEvent) where TEvent : Enum
     {
-        var state = careStates.Find(x => x.eventName == careEvent);
-        state.Complete(this);
-        careStates.Remove(state);
+        var state = states.Find(x => x is State<TEvent> state &&
+                                        state.EventName.Equals(careEvent)) as State<TEvent>;
+        if (state != null)
+        {
+            state.Complete(this);
+            states.Remove(state);
+        }
+    }
+
+    public void CompleteState(Enum careEvent)
+    {
+        var state = states.Find(x => x.EventName.Equals(careEvent));
+        if (state != null)
+        {
+            state.Complete(this);
+            states.Remove(state);
+        }
     }
 
     public void CompleteAllStates()
     {
-        careStates.ForEach(x => x.Complete(this));
-        careStates.Clear();
+        states.ForEach(x => x.Complete(this));
+        states.Clear();
     }
 
     #endregion

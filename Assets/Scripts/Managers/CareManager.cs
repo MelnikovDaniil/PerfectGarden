@@ -16,7 +16,7 @@ public class CareManager : MonoBehaviour
 
     public static bool CareInProcess;
 
-    public List<ScriptableCareStateInfo> stateInfos;
+    public List<ScriptableStateInfo<CareEvent>> stateInfos;
 
     [SerializeField] private CareMenu CareCanvas;
 
@@ -73,7 +73,6 @@ public class CareManager : MonoBehaviour
         foreach (var careEvent in potWithPlant.waitingCareEvents.Where(careEvent => potWithPlant.GetState(careEvent) == null))
         {
             stateInfos.Find(stateInfo => stateInfo.EvenName == careEvent)?.Apply(potWithPlant);
-
         }
     }
 

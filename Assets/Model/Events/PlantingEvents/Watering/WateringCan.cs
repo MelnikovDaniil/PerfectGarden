@@ -4,6 +4,7 @@
 public class WateringCan : MonoBehaviour
 {
     public ParticleSystem waterParticles;
+    public ParticleSystem splashParticles;
     public float rotationAngle = 15f;
     public float rotationSpeed = 5f;
 

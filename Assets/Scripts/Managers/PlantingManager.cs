@@ -9,6 +9,7 @@ public class PlantingManager : MonoBehaviour
     public static event Action<PotWithPlant> OnPlantingFinished;
     public static PlantingManager Instance;
     public List<PlantingEvent> tempEvents;
+    public List<ScriptableStateInfo<PlantingEvent>> stateInfos;
 
     [SerializeField] private CareMenu CareCanvas;
     [SerializeField] private FinishPlanting finishPlantingCanvas;
@@ -40,9 +41,12 @@ public class PlantingManager : MonoBehaviour
 
         foreach (var eventHandler in currentEventHandlers)
         {
+            var stateInfo = stateInfos.Find(stateInfo => stateInfo.EvenName == eventHandler.EventName);
+            stateInfo?.Apply(plantingContext.PotWithPlant);
             await eventHandler.PrepareAsync();
             await eventHandler.StartAsync();
             eventHandler.Clear();
+            stateInfo?.Complete(plantingContext.PotWithPlant);
         }
 
         finishPlantingCanvas.ShowMenu();

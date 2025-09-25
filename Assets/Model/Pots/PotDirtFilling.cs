@@ -24,6 +24,7 @@ public class PotDirtFilling : MonoBehaviour
     {
         currentFillParticlesAmount = 0;
         dirt.localPosition = new Vector3(0, dirtMinY, 0);
+        dirt.GetComponent<MeshRenderer>().material.SetColor("_BaseColor", Color.white);
     }
 
     private void OnParticleCollision(GameObject other)

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65616da631c2a064284c32c0f2b62c01, type: 3}
+  m_Name: WateringStatePlantStateInfo
+  m_EditorClassIdentifier: 
+  targetWateringParticlesAmount: 140
+  targetWateringBrightness: 0.5
+  DustParticlesPrefab: {fileID: 5450816155774467655, guid: b9266607643c418468bb4a13499fcc4b, type: 3}
+  splashParticlesPrefab: {fileID: 467080169286145235, guid: 2c5cad677b861e14fafd99d7dc7c8075, type: 3}
+  dryColor: {r: 1, g: 1, b: 1, a: 1}

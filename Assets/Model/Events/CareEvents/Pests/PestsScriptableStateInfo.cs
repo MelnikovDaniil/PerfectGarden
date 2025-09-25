@@ -18,7 +18,7 @@ public class PestsScriptableStateInfo : ScriptableCareStateInfo
 
     public override CareEvent EvenName => CareEvent.Pests;
 
-    public override CareState CreateState()
+    public override State<CareEvent> CreateState()
     {
         return new PestsState(this);
     }

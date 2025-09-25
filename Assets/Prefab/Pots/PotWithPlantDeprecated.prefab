@@ -186,7 +186,6 @@ GameObject:
   - component: {fileID: 5939573122239205475}
   - component: {fileID: 4223407302564758478}
   - component: {fileID: 1749420721028060417}
-  - component: {fileID: 5282966576814670490}
   m_Layer: 6
   m_Name: PotWithPlantDeprecated
   m_TagString: Untagged
@@ -224,8 +223,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dirtCollider: {fileID: 538806445631189675}
-  waitingCareEvents: 
-  plantRenderer: {fileID: 1643444864336265336}
+  IsOrder: 0
+  IsDied: 0
+  plantPlace: {fileID: 0}
   potBottomPostionY: -1.3
 --- !u!50 &4223407302564758478
 Rigidbody2D:
@@ -270,21 +270,6 @@ MonoBehaviour:
   dirtMinY: -0.8
   dirtMaxY: 0
   targetFillParticlesAmount: 100
---- !u!114 &5282966576814670490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2905322252743995405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 858c1ad9e0c6329488ed9ac2bcacc938, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetWateringParticlesAmount: 70
-  targetWateringBrightness: 0.5
-  dirt: {fileID: 5942122803700188122}
 --- !u!1 &5228364773086710609
 GameObject:
   m_ObjectHideFlags: 0

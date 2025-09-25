@@ -1,14 +1,6 @@
-public abstract class CareState
+public abstract class CareState : State<CareEvent>
 {
-    public CareEvent eventName { get; private set; }
-    protected ScriptableCareStateInfo StateInfo { get; private set; }
-
-    public CareState(ScriptableCareStateInfo stateInfo)
+    public CareState(ScriptableCareStateInfo stateInfo) : base(stateInfo)
     {
-        StateInfo = stateInfo;
-        eventName = stateInfo.EvenName;
     }
-
-    public abstract void Apply(PotWithPlant plant);
-    public abstract void Complete(PotWithPlant plant);
 }
