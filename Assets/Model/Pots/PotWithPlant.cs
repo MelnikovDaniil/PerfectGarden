@@ -73,10 +73,6 @@ public class PotWithPlant : MonoBehaviour
         dirtCollider.GetComponent<MeshRenderer>().material.color = new Color(0.25f, 0.25f, 0.25f);
     }
 
-    //private void Start()
-    //{
-    //}
-
     public void SetStage(int plantStage)
     {
         currentStage = plantStage;
@@ -141,11 +137,11 @@ public class PotWithPlant : MonoBehaviour
     ///// </summary>
     ///// <param name="careEvent"></param>
     ///// <returns></returns>
-    //public CareState GetState(CareEvent careEvent)
-    //{
-    //    return (CareState)careStates.Find(x => x is CareState state &&
-    //                               state.EventName.Equals(careEvent));
-    //}
+    public CareState GetState(CareEvent careEvent)
+    {
+        return (CareState)states.Find(x => x is CareState state &&
+                                   state.EventName.Equals(careEvent));
+    }
 
     public void CompleteState<TEvent>(TEvent careEvent) where TEvent : Enum
     {
