@@ -52,7 +52,6 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
 
         protected override async Task PrepareHandlingAsync(CancellationToken token = default)
         {
-            PlantRotationManager.Instance.SetRotationEnabled(false);
             // Get rid of Plant
             await MovementHelper.MoveObjectAwayAsync(Context.PotWithPlant.transform, Vector3.down, 1f, true);
 
@@ -195,7 +194,6 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
 
         public override void Clear()
         {
-            PlantRotationManager.Instance.SetRotationEnabled(true);
             // Hide bottle
             // Return Plant to base state
             bucketInstance.gameObject.SetActive(false);

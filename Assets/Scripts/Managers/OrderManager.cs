@@ -97,7 +97,7 @@ public class OrderManager : MonoBehaviour
         while (!token.IsCancellationRequested)
         {
             await CheckPendingOrdersAsync();
-            await Task.Delay(orderGenerationInterval, token);
+            await Task.Delay(orderGenerationInterval);
         }
     }
 

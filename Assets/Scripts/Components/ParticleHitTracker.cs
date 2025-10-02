@@ -1,26 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class ParticleHitTracker : MonoBehaviour
 {
     public Action<GameObject> OnHit;
 
-    private Rigidbody rigidbody;
+    private Rigidbody rb;
+    private Rigidbody newRb;
+    private bool cachedKinematic;
     private bool isActive = false;
-
-    private void Awake()
-    {
-        rigidbody = GetComponent<Rigidbody>();
-    }
 
     private void Start()
     {
-        rigidbody.isKinematic = true;
+        if (!gameObject.TryGetComponent(out rb))
+        {
+            newRb = gameObject.AddComponent<Rigidbody>();
+            rb = newRb;
+        }
+        else
+        {
+            cachedKinematic = rb.isKinematic;
+        }
+        rb.isKinematic = true;
     }
 
     public void StartTracking()
@@ -31,6 +32,14 @@ public class ParticleHitTracker : MonoBehaviour
     public void StopTracking()
     {
         isActive = false;
+        if (newRb != null)
+        {
+            Destroy(newRb);
+        }
+        else
+        {
+            rb.isKinematic = cachedKinematic;
+        }
     }
 
     private void OnParticleCollision(GameObject other)
@@ -41,6 +50,5 @@ public class ParticleHitTracker : MonoBehaviour
 
     private void OnDestroy()
     {
-        Destroy(rigidbody);
     }
 }

@@ -40,6 +40,11 @@ public class PotSelectionEventHandler : PlantEventHandler
         }
         while (selectedPot == null)
         {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
             await Task.Yield();
         }
         var generatedPot = Instantiate(selectedPot.potPrefab);
@@ -49,7 +54,7 @@ public class PotSelectionEventHandler : PlantEventHandler
 
     public override void Clear()
     {
-        Context.PotWithPlant.gameObject.SetActive(false);
+        Context?.PotWithPlant?.gameObject?.SetActive(false);
         selectionMenu.Hide();
         selectedPot = null;
         base.Clear();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEditor.U2D.ScriptablePacker;
 using Random = UnityEngine.Random;
 
 public class CareManager : MonoBehaviour
@@ -26,6 +27,7 @@ public class CareManager : MonoBehaviour
     private CancellationTokenSource eventCancellationSource;
 
     private PotWithPlant currentPlant;
+    private Transform backTransform;
 
     private List<CareEventHandler> careEventHandlers;
     private List<BuffEventHandler> buffEventHandlers;
@@ -106,14 +108,14 @@ public class CareManager : MonoBehaviour
     public async Task MoveToTrash()
     {
         currentPlant.gameObject.SetActive(false);
-        await Task.Delay(2000);
+        await Task.Delay(2000); // Animation
         FinishCare();
     }
 
     public async Task PurchaseAsync()
     {
         currentPlant.gameObject.SetActive(false);
-        await Task.Delay(2000);
+        await Task.Delay(2000); // Animation
         MoneyMapper.Money += currentPlant.plantInfo.plantPrice;
         MoneyMapper.TrySetNewHighestReward(currentPlant.plantInfo.plantPrice);
         FinishCare();
@@ -124,10 +126,11 @@ public class CareManager : MonoBehaviour
     {
         CareInProcess = true;
         currentPlant = potWithPlant;
+        backTransform = potWithPlant.transform.parent;
 
         SetupPlant(currentPlant);
 
-        CareCanvas.ShowMenu(currentPlant);
+        CareCanvas.ShowMenu(currentPlant, true);
         CareCanvas.OnBackPressed = FinishCare;
         OnCareMenuOpen.Invoke();
     }
@@ -145,7 +148,7 @@ public class CareManager : MonoBehaviour
     {
         eventCancellationSource = new CancellationTokenSource();
 
-        CareCanvas.HideAllButtons();
+        CareCanvas.HideAllButtons(true);
         CareCanvas.OnBackPressed = () =>
         {
             eventCancellationSource?.Cancel();
@@ -159,11 +162,13 @@ public class CareManager : MonoBehaviour
         };
 
         eventHandler.Setup(careContext);
+        PlantRotationManager.Instance.SetRotationEnabled(false);
         await eventHandler.PrepareAsync(eventCancellationSource.Token);
         await eventHandler.StartAsync(eventCancellationSource.Token);
         eventHandler.Clear();
         await Task.Delay((int)(CameraManager.Instanse.transitionDuration * 1000));
 
+        PlantRotationManager.Instance.SetRotationEnabled(true);
         if (eventHandler.Status == HandlingStatus.Finished)
         {
             stateInfos.FirstOrDefault(stateInfo => stateInfo.EvenName == eventName)?.Complete(currentPlant);
@@ -191,7 +196,7 @@ public class CareManager : MonoBehaviour
 
         SetupPlant(currentPlant);
 
-        CareCanvas.ShowMenu(currentPlant);
+        CareCanvas.ShowMenu(currentPlant, true);
         CareCanvas.OnBackPressed = FinishCare;
     }
 
@@ -199,7 +204,7 @@ public class CareManager : MonoBehaviour
     {
         eventCancellationSource = new CancellationTokenSource();
 
-        CareCanvas.HideAllButtons();
+        CareCanvas.HideAllButtons(true);
         CareCanvas.OnBackPressed = () =>
         {
             eventCancellationSource?.Cancel();
@@ -224,7 +229,7 @@ public class CareManager : MonoBehaviour
         
         SetupPlant(currentPlant);
 
-        CareCanvas.ShowMenu(currentPlant);
+        CareCanvas.ShowMenu(currentPlant, true);
         CareCanvas.OnBackPressed = FinishCare;
     }
 
@@ -233,8 +238,9 @@ public class CareManager : MonoBehaviour
         CareCanvas.HideMenu();
         OnCareFinished?.Invoke(currentPlant);
         CareInProcess = false;
-        currentPlant.transform.parent = null;
+        currentPlant.transform.parent = backTransform;
         currentPlant = null;
+        backTransform = null;
         OnCareMenuClosed?.Invoke();
     }
 
@@ -243,6 +249,7 @@ public class CareManager : MonoBehaviour
         potWithPlant.transform.parent = plantPlace;
         potWithPlant.transform.localScale = Vector3.one;
         potWithPlant.transform.localPosition = Vector3.zero;
+        potWithPlant.transform.localRotation = Quaternion.identity;
         potWithPlant.gameObject.SetActive(true);
     }
 }

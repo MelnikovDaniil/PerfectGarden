@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GardernManager : MonoBehaviour
@@ -11,7 +12,6 @@ public class GardernManager : MonoBehaviour
     public static event Action OnGardenOpen;
     public static event Action OnGardenClose;
     public float plantCellScale = 0.3f;
-    public int stateCheckIntervalSec = 60;
 
     public GameObject gardenLocation;
     public PotWithPlant potWithPlantPrefab;
@@ -23,6 +23,7 @@ public class GardernManager : MonoBehaviour
 
     private List<PotInfo> potTypes;
     private List<PlantInfo> plantTypes;
+    private bool isOpen;
 
     private LayerMask selectionLayerMask;
 
@@ -39,8 +40,10 @@ public class GardernManager : MonoBehaviour
 
     private async void Start()
     {
+        isOpen = true;
         LoadPlants();
         CareManager.Instance.GenerateCare(growingPlants);
+        PlantingManager.OnPlantingCancel += Open;
         PlantingManager.OnPlantingFinished += potWithPlant =>
         {
             growingPlants.Add(potWithPlant);
@@ -50,6 +53,7 @@ public class GardernManager : MonoBehaviour
 
         CareManager.OnCareFinished = (plant) =>
         {
+            // Error - Null reference
             if (plant.gameObject.activeSelf)
             {
                 PlacePlant(plant);
@@ -70,8 +74,6 @@ public class GardernManager : MonoBehaviour
             await TutorialManager.Instance.SetTap(plane, true);
             GuideMapper.Complete(GuideStep.PlantPlaceSelection);
         }
-
-        var _ = StateChecking();
     }
 
     private async void Update()
@@ -88,6 +90,8 @@ public class GardernManager : MonoBehaviour
                 var potWithPlant = hit.collider.GetComponentInParent<PotWithPlant>();
                 if (potWithPlant != null)
                 {
+                    var plantPlace = potWithPlant.transform.Find("PlaceBox");
+                    plantPlace.gameObject.SetActive(false);
                     await StartCaringAsync(potWithPlant);
                 }
                 else
@@ -106,13 +110,23 @@ public class GardernManager : MonoBehaviour
     public void Open()
     {
         gardenLocation.SetActive(true);
+        isOpen = true;
         OnGardenOpen?.Invoke();
     }
 
     public void Close()
     {
         gardenLocation.SetActive(false);
+        isOpen = false;
         OnGardenClose?.Invoke();
+    }
+
+    public void UpdateMenu()
+    {
+        if (isOpen)
+        {
+            OnGardenOpen?.Invoke();
+        }
     }
 
     public async Task StartPlantingAsync(Vector3 tilePostion)
@@ -136,8 +150,72 @@ public class GardernManager : MonoBehaviour
             Destroy(colliders.FirstOrDefault().gameObject);
         }
         potWithPlant.transform.position = potPosition;
+        potWithPlant.transform.localRotation = Quaternion.identity;
         potWithPlant.transform.parent = gardenLocation.transform;
         potWithPlant.transform.localScale = Vector3.one * plantCellScale;
+
+        var plantPlace = potWithPlant.transform.Find("PlaceBox");
+        
+        if (plantPlace != null)
+        {
+            plantPlace.gameObject.SetActive(true);
+        }
+        else
+        {
+            CreatePlaceBox(potWithPlant.gameObject);
+        }
+    }
+
+    public void CreatePlaceBox(GameObject targetObject)
+    {
+        var clickBox = new GameObject("PlaceBox")
+        {
+            layer = LayerMask.NameToLayer("PlantPlace"),
+        };
+        clickBox.transform.parent = targetObject.transform;
+        clickBox.transform.localPosition = Vector3.zero;
+        clickBox.transform.localRotation = Quaternion.identity;
+        clickBox.transform.localScale = Vector3.one;
+
+        var boxCollider = clickBox.AddComponent<BoxCollider>();
+        var totalBounds = CalculateTotalBounds(targetObject);
+        if (totalBounds.size != Vector3.zero)
+        {
+            var localCenter = targetObject.transform.InverseTransformPoint(totalBounds.center);
+            var localSize = targetObject.transform.InverseTransformVector(totalBounds.size);
+
+            //localSize = Vector3.Scale(localSize, sizeMultiplier) + padding;
+
+            boxCollider.center = localCenter;
+            boxCollider.size = localSize * 0.7f;
+
+            Debug.Log($"Composite collider created for {targetObject.name}: center={localCenter}, size={localSize}");
+        }
+        else
+        {
+            Debug.LogWarning($"Could not calculate valid bounds for {targetObject.name}");
+        }
+    }
+
+
+    private Bounds CalculateTotalBounds(GameObject targetObject)
+    {
+        var renderers = targetObject.GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length == 0)
+        {
+            Debug.LogWarning($"No renderers found in {targetObject.name} hierarchy!");
+            return new Bounds(targetObject.transform.position, Vector3.zero);
+        }
+
+        var totalBounds = renderers[0].bounds;
+
+        for (var i = 1; i < renderers.Length; i++)
+        {
+            totalBounds.Encapsulate(renderers[i].bounds);
+        }
+
+        return totalBounds;
     }
 
     private void SavePlants()
@@ -186,17 +264,6 @@ public class GardernManager : MonoBehaviour
             BuffManager.Instance.ApplyBuffs(createdPotWithPlant, state.buffs);
             PlacePlant(createdPotWithPlant);
             growingPlants.Add(createdPotWithPlant);
-        }
-    }
-
-    private async Task StateChecking()
-    {
-        while (true)
-        {
-            await Task.Delay(1000 * stateCheckIntervalSec);
-            CareManager.Instance.GenerateCare(growingPlants);
-            CareManager.Instance.UpdateMenu();
-            OnGardenOpen?.Invoke();
         }
     }
 

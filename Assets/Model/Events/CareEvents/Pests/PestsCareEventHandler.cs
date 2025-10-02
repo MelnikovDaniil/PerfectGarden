@@ -44,6 +44,8 @@ public class PestsCareEventHandler : CareEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        PlantRotationManager.Instance.SetRotationEnabled(true);
+
         foreach (var worm in state.worms)
         {
             _ = TutorialManager.Instance.SetTap(worm.gameObject, false, token);
@@ -90,6 +92,7 @@ public class PestsCareEventHandler : CareEventHandler
 
     public override void Clear()
     {
+        PlantRotationManager.Instance.SetRotationEnabled(false);
         pincetInstance.gameObject.SetActive(false);
         pincetInstance.transform.parent = transform;
         pullingOutStarted = false;
