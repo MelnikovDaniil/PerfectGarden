@@ -139,8 +139,7 @@ public class PotWithPlant : MonoBehaviour
     ///// <returns></returns>
     public CareState GetState(CareEvent careEvent)
     {
-        return (CareState)states.Find(x => x is CareState state &&
-                                   state.EventName.Equals(careEvent));
+        return (CareState)states.Find(x => x.EventName.Equals(careEvent));
     }
 
     public void CompleteState<TEvent>(TEvent careEvent) where TEvent : Enum

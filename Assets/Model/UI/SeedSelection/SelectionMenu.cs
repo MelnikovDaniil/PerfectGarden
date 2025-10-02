@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectionMenu : MonoBehaviour
 {
@@ -12,9 +13,14 @@ public class SelectionMenu : MonoBehaviour
     [SerializeField] private PlantInformationCard informationCard;
     [SerializeField] private Canvas moreInforCanvas;
     [SerializeField] private Canvas errorMessage;
+    [SerializeField] private Button cancelButton;
     [SerializeField] private ProductMiniCard miniCardPrefab;
     [SerializeField] private List<TextMeshProUGUI> moneyTests;
 
+    private void Awake()
+    {
+        cancelButton.onClick.AddListener(() => PlantingManager.Instance.CancelPlanting());
+    }
 
     public void GenerateCards(List<ProductInfo> productInfos)
     {

@@ -44,6 +44,10 @@ public class SeedSelectionEventHandler : PlantEventHandler
         }
         while (selectedSeed == null)
         {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
             await Task.Yield();
         }
         Context.plantInfo = selectedSeed;

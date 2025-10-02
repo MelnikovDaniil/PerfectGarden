@@ -6,7 +6,6 @@ public class WateringEventHandler : PlantEventHandler
 {
     public override PlantingEvent EventName => PlantingEvent.Watering;
 
-    public Animator waterignAnimator;
     public WateringCan wateringCan;
     public Transform potTransformParent;
 
@@ -17,16 +16,14 @@ public class WateringEventHandler : PlantEventHandler
         state = Context.PotWithPlant.GetState<WateringState<PlantingEvent>>();
         Context.PotWithPlant.gameObject.SetActive(true);
         Context.PotWithPlant.transform.parent = potTransformParent;
-        Context.PotWithPlant.transform.localPosition = Vector3.zero;
-        Context.PotWithPlant.transform.localScale = Vector3.one;
 
         wateringCan.gameObject.SetActive(true);
         wateringCan.StopWatering();
-        wateringCan.transform.localPosition = Vector3.zero;
+        wateringCan.transform.localPosition = new Vector3(0, 12f, 0);
 
-        waterignAnimator.gameObject.SetActive(true);
+        await MovementHelper.MoveObjectToBasePositionAsync(wateringCan.transform, 1, true);
+        await MovementHelper.MoveObjectToBasePositionAsync(Context.PotWithPlant.transform, 1, true);
 
-        await AnimatorHelper.PlayAnimationForTheEndAsync(waterignAnimator, "Appearance");
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
@@ -43,6 +40,7 @@ public class WateringEventHandler : PlantEventHandler
             }
             await Task.Yield();
         }
+        await MovementHelper.MoveObjectAwayAsync(wateringCan.transform, Vector3.up, 0.3f, true);
     }
 
     public override void Clear()
@@ -50,6 +48,5 @@ public class WateringEventHandler : PlantEventHandler
         Context.PotWithPlant.gameObject.SetActive(false);
         wateringCan.StopWatering();
         wateringCan.gameObject.SetActive(false);
-        waterignAnimator.gameObject.SetActive(false);
     }
 }

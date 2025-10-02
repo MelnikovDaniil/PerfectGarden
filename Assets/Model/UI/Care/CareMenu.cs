@@ -18,6 +18,8 @@ public class CareMenu : MonoBehaviour
     public GameObject canvas;
     public Button BackButton;
 
+    private bool isLocked;
+
     private void Awake()
     {
         canvas.SetActive(false);
@@ -31,54 +33,60 @@ public class CareMenu : MonoBehaviour
         BackButton.onClick.AddListener(() => OnBackPressed?.Invoke());
     }
 
-    public void ShowMenu(PotWithPlant plant)
+    public void ShowMenu(PotWithPlant plant, bool unlock = false)
     {
-        canvas.SetActive(true);
-        currencyText.text = MoneyMapper.Money + "$";
-        BackButton.gameObject.SetActive(true);
-        HideAllButtons();
+        if (!isLocked || unlock)
+        {
+            isLocked = false;
+            canvas.SetActive(true);
+            currencyText.text = MoneyMapper.Money + "$";
+            BackButton.gameObject.SetActive(true);
+            HideAllButtons();
 
-        if (plant.IsShouldBeRotted)
-        {
-            trashButton.gameObject.SetActive(true);
-            trashButton.onClick.AddListener(async () =>
+            if (plant.IsShouldBeRotted)
             {
-                HideAllButtons();
-                await CareManager.Instance.MoveToTrash();
-            });
-        }
-        else if (!plant.IsLastStage)
-        {
-            
-            if (plant.waitingCareEvents.Any())
-            {
-                var careButtonsToEnable = careButtons.Where(x => plant.waitingCareEvents.Contains(x.eventName));
-                foreach (var careButton in careButtonsToEnable)
+                trashButton.gameObject.SetActive(true);
+                trashButton.onClick.RemoveAllListeners();
+                trashButton.onClick.AddListener(async () =>
                 {
-                    careButton.gameObject.SetActive(true);
+                    HideAllButtons();
+                    await CareManager.Instance.MoveToTrash();
+                });
+            }
+            else if (!plant.IsLastStage)
+            {
+
+                if (plant.waitingCareEvents.Any())
+                {
+                    var careButtonsToEnable = careButtons.Where(x => plant.waitingCareEvents.Contains(x.eventName));
+                    foreach (var careButton in careButtonsToEnable)
+                    {
+                        careButton.gameObject.SetActive(true);
+                    }
+                }
+                else
+                {
+                    var activeBuffTypes = plant.GetAllBuffStates().Select(x => x.buffType);
+                    var buffButtonsToEnable = buffButtons.Where(x => !activeBuffTypes.Contains(x.buffType));
+                    foreach (var buffButton in buffButtonsToEnable)
+                    {
+                        buffButton.gameObject.SetActive(true);
+                    }
                 }
             }
             else
             {
-                var activeBuffTypes = plant.GetAllBuffStates().Select(x => x.buffType);
-                var buffButtonsToEnable = buffButtons.Where(x => !activeBuffTypes.Contains(x.buffType));
-                foreach (var buffButton in buffButtonsToEnable)
+                purchaseButton.gameObject.SetActive(true);
+                priceText.text = plant.plantInfo.plantPrice.ToString();
+                purchaseButton.onClick.RemoveAllListeners();
+                purchaseButton.onClick.AddListener(async () =>
                 {
-                    buffButton.gameObject.SetActive(true);
-                }
+                    HideAllButtons();
+                    await CareManager.Instance.PurchaseAsync();
+                });
             }
-        }
-        else
-        {
-            purchaseButton.gameObject.SetActive(true);
-            priceText.text = plant.plantInfo.plantPrice.ToString();
-            purchaseButton.onClick.AddListener(async () =>
-            {
-                HideAllButtons();
-                await CareManager.Instance.PurchaseAsync();
-            });
-        }
 
+        }
     }
 
     public void HideMenu()
@@ -89,8 +97,9 @@ public class CareMenu : MonoBehaviour
         BackButton.gameObject.SetActive(false);
     }
 
-    public void HideAllButtons()
+    public void HideAllButtons(bool locked = false)
     {
+        isLocked = locked;
         purchaseButton.onClick.RemoveAllListeners();
         trashButton.gameObject.SetActive(false);
         purchaseButton.gameObject.SetActive(false);
