@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 using Random = UnityEngine.Random;
 
@@ -15,10 +16,12 @@ public class OrderManager : MonoBehaviour
     public static event Action<Order> OnOrderСomplete;
     public static event Action<Order> OnOrderPlaced;
     public static event Action OnAllOrdersComplete;
+    public SpriteRenderer characterRenderer;
     public GameObject location;
     public Transform plantPlace;
     public int maxOrderNumber;
     public int orderGenerationInterval = 300;
+    public List<OrderCharacterInfo> charactersInfos;
 
     [Space]
     [Header("Reward settings")]
@@ -51,10 +54,26 @@ public class OrderManager : MonoBehaviour
         "I'd be so thankful if you could give my {0} some love and care today!"
     };
 
+    private readonly string[] gratitudePhrases =
+    {
+        "Thanks for watering my plants!",
+        "I appreciate you looking after my plant.",
+        "Thank you for taking care of it!",
+        "You're a plant-saving hero!",
+        "Thanks for keeping it alive!",
+        "I owe you for plant-sitting!",
+        "Thank you for the TLC!",
+        "You're the best plant parent!",
+        "Thanks for nurturing my green friend!",
+        "My plant thanks you too!"
+    };
+
     private void Awake()
     {
         Instance = this;
         orderGenerationTokenSource = new CancellationTokenSource();
+        OnAllOrdersComplete += () => characterRenderer.gameObject.SetActive(false);
+
         if (minRewardCostFromHighest > maxRewardCostFromHighest)
         {
             throw new ArgumentException("Min reward cost cannot be higher than max");
@@ -69,7 +88,7 @@ public class OrderManager : MonoBehaviour
         await StartOrderGenerationTimerAsync(orderGenerationTokenSource.Token);
     }
 
-    public void Open()
+    public async Task OpenAsync()
     {
         location.SetActive(true);
         if (currentOrder == null)
@@ -83,7 +102,7 @@ public class OrderManager : MonoBehaviour
         }
         else
         {
-            PlaceOrder(currentOrder);
+            await PlaceOrderAsync(currentOrder);
         }
     }
 
@@ -169,6 +188,7 @@ public class OrderManager : MonoBehaviour
         {
             Name = $"{plantInfo.name} care",
             Description = string.Format(descriptionTamplates.GetRandom(), plantInfo.name),
+            CharacterId = Random.Range(0, charactersInfos.Count - 1),
             PotWithPlant = generatedPlant,
             Reward = CalculateCost(),
         };
@@ -186,17 +206,36 @@ public class OrderManager : MonoBehaviour
                 Destroy(currentOrder.PotWithPlant.gameObject);
                 orders.Remove(currentOrder);
                 OnOrderСomplete.Invoke(currentOrder);
-                currentOrder = null;
 
                 SaveOrders();
+                await SayThankYouAsync();
+                currentOrder = null;
             }
-            Open();
+            await OpenAsync();
         };
 
         await CareManager.Instance.OpenCareMenu(currentOrder.PotWithPlant);
     }
 
-    public void PlaceOrder(Order order)
+    private bool isThankYouDialogue = false;
+
+    public async Task ShowOrderDescriptionAsync()
+    {
+        isThankYouDialogue = false;
+        characterRenderer.sprite = charactersInfos[currentOrder.CharacterId].regular;
+        await OrderManagerUI.Instance.ShowDialogueAsync(currentOrder.Description, isThankYouDialogue);
+    }
+
+    public async Task SayThankYouAsync()
+    {
+        location.SetActive(true);
+        isThankYouDialogue = true;
+        var thankYouPhrase = gratitudePhrases.GetRandom();
+        characterRenderer.sprite = charactersInfos[currentOrder.CharacterId].fun;
+        await OrderManagerUI.Instance.ShowDialogueAsync(thankYouPhrase, isThankYouDialogue);
+    }
+
+    public async Task PlaceOrderAsync(Order order)
     {
         foreach (Transform item in plantPlace)
         {
@@ -207,7 +246,9 @@ public class OrderManager : MonoBehaviour
         order.PotWithPlant.transform.localPosition = Vector3.zero;
         order.PotWithPlant.transform.localScale = Vector3.one;
         order.PotWithPlant.transform.localRotation = Quaternion.identity;
+
         currentOrder = order;
+        await ShowOrderDescriptionAsync();
         OnOrderPlaced?.Invoke(currentOrder);
     }
 
@@ -240,6 +281,7 @@ public class OrderManager : MonoBehaviour
             var order = new Order
             {
                 Name = orderSave.plantName,
+                CharacterId = orderSave.characterId,
                 Description = orderSave.description,
                 PotWithPlant = createdPotWithPlant,
                 Reward = orderSave.reward,
@@ -262,6 +304,7 @@ public class OrderManager : MonoBehaviour
                 plantName = order.PotWithPlant.plantInfo.name,
                 potName = order.PotWithPlant.potInfo.name,
                 waitingCareEvents = order.PotWithPlant.waitingCareEvents,
+                characterId = order.CharacterId,
                 reward = order.Reward,
             }).ToList();
 

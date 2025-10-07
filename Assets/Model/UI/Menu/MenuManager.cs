@@ -55,13 +55,13 @@ public class MenuManager : MonoBehaviour
         OrderCanvas.SetActive(false);
     }
 
-    public void OpenOrderLocation()
+    public async void OpenOrderLocationAsync()
     {
         notification.SetActive(false);
         GardernManager.Instance.Close();
         GardenCanvas.SetActive(false);
 
-        OrderManager.Instance.Open();
+        await OrderManager.Instance.OpenAsync();
         OrderCanvas.SetActive(true);
     }
 

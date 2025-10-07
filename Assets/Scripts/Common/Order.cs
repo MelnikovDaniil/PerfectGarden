@@ -12,5 +12,7 @@ public class Order
     
     public string Description { get; set; }
 
+    public int CharacterId { get; set; }
+
     public int Reward { get; set; }
 }

@@ -9,6 +9,7 @@ public class OrderSaveInfo
     public string plantName;
     public string potName;
     public int reward;
+    public int characterId;
     public int stage;
     public List<CareEvent> waitingCareEvents;
 }

@@ -1,19 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class OrderManagerUI : MonoBehaviour
 {
+    public static OrderManagerUI Instance;
     public TMP_Dropdown ordersDropdown;
     public Button careButton;
+    public Animator dialogMenu;
+    public TMP_Text dialogueText;
+    public float typingSpeed = 0.05f;
+    public float minDialogueTime = 1f;
 
+    private Order currentSelectedOrder;
     private List<Order> currentOrders = new List<Order>();
     private bool isDropdownUpdateInProgress = false;
 
     private void Awake()
     {
+        Instance = this;
         CareManager.OnCareMenuOpen += () =>
         {
             ordersDropdown.gameObject.SetActive(false);
@@ -31,7 +41,7 @@ public class OrderManagerUI : MonoBehaviour
         OrderManager.OnOrderAdded += (order) => ordersDropdown.gameObject.SetActive(true);
         OrderManager.OnOrderСomplete += RemoveOrderFromDropdown;
 
-        OrderManager.OnOrderPlaced += (order) => 
+        OrderManager.OnOrderPlaced += (order) =>
         {
             careButton.gameObject.SetActive(true);
         };
@@ -51,17 +61,41 @@ public class OrderManagerUI : MonoBehaviour
 
     private void Start()
     {
+        dialogMenu.gameObject.SetActive(false);
         UpdateDropdownOptions();
+        ordersDropdown.RefreshShownValue();
     }
 
-    private void OnDropdownValueChanged(int index)
+    public async Task ShowDialogueAsync(string text, bool isThankYou = false, CancellationToken token = default)
     {
+        dialogueText.text = "";
+        dialogMenu.gameObject.SetActive(true);
+        careButton.gameObject.SetActive(!isThankYou);
+        var dialogueTime = Task.Delay((int)(minDialogueTime * 1000));
+        dialogMenu.Play("DialogueMenu_Appearence", 0, 0);
+
+        foreach (char letter in text.ToCharArray())
+        {
+            if (token.IsCancellationRequested)
+                return;
+
+            dialogueText.text += letter;
+            await Task.Delay((int)(typingSpeed * 1000));
+        }
+
+        careButton.gameObject.SetActive(true);
+        await dialogueTime;
+    }
+
+    private async void OnDropdownValueChanged(int index)
+    {
+        dialogMenu.gameObject.SetActive(false);
         if (isDropdownUpdateInProgress || index < 0 || index >= currentOrders.Count)
             return;
 
-        var selectedOrder = currentOrders[index];
+        currentSelectedOrder = currentOrders[index];
 
-        OrderManager.Instance.PlaceOrder(selectedOrder);
+        await OrderManager.Instance.PlaceOrderAsync(currentSelectedOrder);
 
         ordersDropdown.SetValueWithoutNotify(index);
     }
