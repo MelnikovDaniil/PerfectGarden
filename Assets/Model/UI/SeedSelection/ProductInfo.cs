@@ -15,7 +15,7 @@ public class ProductInfo
     public string Name { get; }
     public Sprite Preview { get; }
     public int Price { get; }
-    public int ItemsAvaliable { get; }
+    public int ItemsAvaliable { get; set; }
 
     public T GetProduct<T>()
     {

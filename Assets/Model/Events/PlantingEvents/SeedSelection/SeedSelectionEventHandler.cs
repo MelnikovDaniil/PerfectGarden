@@ -27,7 +27,16 @@ public class SeedSelectionEventHandler : PlantEventHandler
     {
         selectedSeed = null;
         selectionMenu.GenerateCards(plantProducts);
-        selectionMenu.OnProductSelection = (product) => { selectedSeed = product.GetProduct<PlantInfo>(); };
+        selectionMenu.OnProductSelection = (product) =>
+        {
+            selectedSeed = product.GetProduct<PlantInfo>();
+            var productName = selectedSeed.name;
+            Context.OnPlantingFinished += () =>
+            {
+                ProductMapper.Remove(productName);
+                product.ItemsAvaliable--;
+            };
+        };
         await Task.Yield();
         await base.PrepareHandlingAsync();
     }

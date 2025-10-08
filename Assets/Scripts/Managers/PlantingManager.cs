@@ -74,6 +74,7 @@ public class PlantingManager : MonoBehaviour
         finishPlantingCanvas.finishPlantingButton.onClick.RemoveAllListeners();
         finishPlantingCanvas.finishPlantingButton.onClick.AddListener(() =>
         {
+            plantingContext.OnPlantingFinished?.Invoke();
             OnPlantingFinished?.Invoke(plantingContext.PotWithPlant);
             OnPlantingMenuClosed?.Invoke();
             finishPlantingCanvas.HideMenu();
