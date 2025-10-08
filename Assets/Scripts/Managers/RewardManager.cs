@@ -39,9 +39,13 @@ public class RewardManager : MonoBehaviour
     {
         StartCoroutine(ThrowCoinsCoroutine((int)Random.Range(rewardCoinRange.x, rewardCoinRange.y)));
     }
-    public void GenerateCareLargeReward()
+    public void GenerateCareLargeReward(int? reward = null)
     {
-        StartCoroutine(ThrowCoinsCoroutine((int)Random.Range(rewardCoinRange.x, rewardCoinRange.y) * 2));
+        if (reward == null)
+        {
+            reward = (int)Random.Range(rewardCoinRange.x, rewardCoinRange.y) * 2;
+        }
+        StartCoroutine(ThrowCoinsCoroutine(reward.Value));
     }
 
     private IEnumerator ThrowCoinsCoroutine(int numberOfCoins)

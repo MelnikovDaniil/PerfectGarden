@@ -200,8 +200,9 @@ public class CareManager : MonoBehaviour
         CareCanvas.OnBackPressed = FinishCare;
     }
 
-    public async Task StartBuffAsync(BuffType buffType)
+    public async Task<bool> StartBuffAsync(BuffType buffType)
     {
+        var success = false;
         eventCancellationSource = new CancellationTokenSource();
 
         CareCanvas.HideAllButtons(true);
@@ -225,12 +226,14 @@ public class CareManager : MonoBehaviour
         if (eventHandler.Status == HandlingStatus.Finished)
         {
             BuffManager.Instance.ApplyBuff(currentPlant, buffType);
+            success = true;
         }
         
         SetupPlant(currentPlant);
 
         CareCanvas.ShowMenu(currentPlant, true);
         CareCanvas.OnBackPressed = FinishCare;
+        return success;
     }
 
     private void FinishCare()
