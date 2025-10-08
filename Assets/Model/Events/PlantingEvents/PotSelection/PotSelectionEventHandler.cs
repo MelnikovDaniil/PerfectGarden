@@ -20,11 +20,21 @@ public class PotSelectionEventHandler : PlantEventHandler
         potsProduct = Resources.LoadAll<PotInfo>("Pots")
             .Select(pot => new ProductInfo(pot, pot.name, pot.shopSprite, pot.price, ProductMapper.GetAvaliableProducts(pot.name))).ToList();
     }
+
     protected override async Task PrepareHandlingAsync(CancellationToken token = default)
     {
         selectedPot = null;
         selectionMenu.GenerateCards(potsProduct);
-        selectionMenu.OnProductSelection = (product) => { selectedPot = product.GetProduct<PotInfo>(); };
+        selectionMenu.OnProductSelection = (product) => 
+        {
+            selectedPot = product.GetProduct<PotInfo>();
+            var productName = selectedPot.name;
+            Context.OnPlantingFinished += () =>
+            {
+                ProductMapper.Remove(productName);
+                product.ItemsAvaliable--;
+            };
+        };
         await base.PrepareHandlingAsync();
     }
 

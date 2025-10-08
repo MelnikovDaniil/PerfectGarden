@@ -28,7 +28,6 @@ public class SelectionMenu : MonoBehaviour
         UpdateMoney();
         foreach (var productInfo in productInfos)
         {
-            var avaliableSeeds = ProductMapper.GetAvaliableProducts(productInfo.Name);
             var createdCard = Instantiate(miniCardPrefab, cardPlace);
             createdCard.OnDetailedView += () => OpenDetailedView(productInfo);
             createdCard.OnTake += () => OnProductSelection(productInfo);
@@ -72,6 +71,8 @@ public class SelectionMenu : MonoBehaviour
         if (MoneyMapper.Money > productInfo.Price)
         {
             MoneyMapper.Money -= productInfo.Price;
+            ProductMapper.Add(productInfo.Name);
+            productInfo.ItemsAvaliable++;
             OnProductSelection(productInfo);
             UpdateMoney();
         }
