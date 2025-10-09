@@ -15,5 +15,5 @@ MonoBehaviour:
   name: Common Pot 1
   plantType: 0
   shopSprite: {fileID: 21300000, guid: b73b1b3bbec814b42a0215b96e71ca1f, type: 3}
-  price: 20
+  price: 1
   potPrefab: {fileID: 3957984063163282306, guid: 746b640df76e2b145ae1dd3b836ffb64, type: 3}
