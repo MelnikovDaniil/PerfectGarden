@@ -17,8 +17,11 @@ public class PlantInformationCard : MonoBehaviour
     public void ShowCard(ProductInfo productInfo)
     {
         nameText.text = productInfo.Name;
+        itemsAvaliableText.enabled = false;
+        takeButton.interactable = true;
 
         previewImage.sprite = productInfo.Preview;
+        previewImage.color = Color.white;
 
         if (productInfo.ItemsAvaliable > 0)
         {
@@ -27,10 +30,16 @@ public class PlantInformationCard : MonoBehaviour
             itemsAvaliableText.text = productInfo.ItemsAvaliable.ToString();
             takeButton.onClick.AddListener(() => OnTake?.Invoke());
         }
-        else
+        else if (productInfo.IsUnlocked || productInfo.IsPartiallyVisible)
         {
             takeButtonText.text = productInfo.Price.ToString();
             takeButton.onClick.AddListener(() => OnPurchase?.Invoke());
+            if (productInfo.IsPartiallyVisible)
+            {
+                previewImage.color = Color.black;
+                nameText.text = "???";
+                takeButton.interactable = false;
+            }
         }
     }
 }

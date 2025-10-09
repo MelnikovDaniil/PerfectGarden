@@ -43,4 +43,4 @@ MonoBehaviour:
   seedSprite: {fileID: 0}
   packageSprite: {fileID: 0}
   shopSprite: {fileID: -159018656, guid: 340f4dfaf1b3ec5478e7f301e68c9556, type: 3}
-  seedPrice: 10
+  seedPrice: 15

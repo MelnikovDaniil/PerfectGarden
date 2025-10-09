@@ -18,7 +18,8 @@ public class PotSelectionEventHandler : PlantEventHandler
     private void Start()
     {
         potsProduct = Resources.LoadAll<PotInfo>("Pots")
-            .Select(pot => new ProductInfo(pot, pot.name, pot.shopSprite, pot.price, ProductMapper.GetAvaliableProducts(pot.name))).ToList();
+            .OrderBy(x => x.price)
+            .Select(pot => new ProductInfo(pot, pot.name, pot.shopSprite, pot.price, ProductMapper.GetAvaliableProducts(pot.name), true, true)).ToList();
     }
 
     protected override async Task PrepareHandlingAsync(CancellationToken token = default)
@@ -44,7 +45,7 @@ public class PotSelectionEventHandler : PlantEventHandler
         await Task.Yield();
         if (!GuideMapper.IsGuideComplete(GuideStep.PotSelection))
         {
-            var purchaseButton = selectionMenu.GetComponentInChildren<ProductMiniCard>().GetComponentsInChildren<Button>().Last();
+            var purchaseButton = selectionMenu.GetComponentsInChildren<ProductMiniCard>().First().GetComponentsInChildren<Button>().Last();
             await TutorialManager.Instance.SetTap(purchaseButton.gameObject, true, token);
             GuideMapper.Complete(GuideStep.PotSelection);
         }

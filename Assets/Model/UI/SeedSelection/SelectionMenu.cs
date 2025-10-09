@@ -28,11 +28,14 @@ public class SelectionMenu : MonoBehaviour
         UpdateMoney();
         foreach (var productInfo in productInfos)
         {
-            var createdCard = Instantiate(miniCardPrefab, cardPlace);
-            createdCard.OnDetailedView += () => OpenDetailedView(productInfo);
-            createdCard.OnTake += () => OnProductSelection(productInfo);
-            createdCard.OnPurchase += () => Purchase(productInfo);
-            createdCard.CreateCard(productInfo);
+            if (productInfo.IsPartiallyVisible || productInfo.IsUnlocked)
+            {
+                var createdCard = Instantiate(miniCardPrefab, cardPlace);
+                createdCard.OnDetailedView += () => OpenDetailedView(productInfo);
+                createdCard.OnTake += () => OnProductSelection(productInfo);
+                createdCard.OnPurchase += () => Purchase(productInfo);
+                createdCard.CreateCard(productInfo);
+            }
         }
     }
 
