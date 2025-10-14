@@ -12,6 +12,7 @@ using Random = UnityEngine.Random;
 public class OrderManager : MonoBehaviour
 {
     public static OrderManager Instance;
+    public static event Action OnGardenOpen;
     public static event Action<Order> OnOrderAdded;
     public static event Action<Order> OnOrderСomplete;
     public static event Action<Order> OnOrderPlaced;
@@ -37,6 +38,7 @@ public class OrderManager : MonoBehaviour
     private List<PotInfo> potTypes;
     private DateTime lastOrderGenerationTime;
     private CancellationTokenSource orderGenerationTokenSource;
+    private CancellationTokenSource orderMenuOpenTokenSource;
 
 
     // Teplates for description
@@ -90,6 +92,7 @@ public class OrderManager : MonoBehaviour
 
     public async Task OpenAsync()
     {
+        orderMenuOpenTokenSource = new CancellationTokenSource();
         location.SetActive(true);
         if (currentOrder == null)
         {
@@ -102,12 +105,18 @@ public class OrderManager : MonoBehaviour
         }
         else
         {
-            await PlaceOrderAsync(currentOrder);
+            await PlaceOrderAsync(currentOrder, orderMenuOpenTokenSource.Token);
+        }
+
+        if (!orderMenuOpenTokenSource.Token.IsCancellationRequested)
+        {
+            OnGardenOpen?.Invoke();
         }
     }
 
     public void Close()
     {
+        orderMenuOpenTokenSource.Cancel();
         location.SetActive(false);
     }
 
@@ -219,11 +228,11 @@ public class OrderManager : MonoBehaviour
 
     private bool isThankYouDialogue = false;
 
-    public async Task ShowOrderDescriptionAsync()
+    public async Task ShowOrderDescriptionAsync(CancellationToken token = default)
     {
         isThankYouDialogue = false;
         characterRenderer.sprite = charactersInfos[currentOrder.CharacterId].regular;
-        await OrderManagerUI.Instance.ShowDialogueAsync(currentOrder.Description, isThankYouDialogue);
+        await OrderManagerUI.Instance.ShowDialogueAsync(currentOrder.Description, isThankYouDialogue, token);
     }
 
     public async Task SayThankYouAsync()
@@ -235,8 +244,10 @@ public class OrderManager : MonoBehaviour
         await OrderManagerUI.Instance.ShowDialogueAsync(thankYouPhrase, isThankYouDialogue);
     }
 
-    public async Task PlaceOrderAsync(Order order)
+    public async Task PlaceOrderAsync(Order order, CancellationToken token = default)
     {
+        if (token.IsCancellationRequested) return;
+
         foreach (Transform item in plantPlace)
         {
             item.gameObject.SetActive(false);
@@ -248,7 +259,7 @@ public class OrderManager : MonoBehaviour
         order.PotWithPlant.transform.localRotation = Quaternion.identity;
 
         currentOrder = order;
-        await ShowOrderDescriptionAsync();
+        await ShowOrderDescriptionAsync(token);
         OnOrderPlaced?.Invoke(currentOrder);
     }
 

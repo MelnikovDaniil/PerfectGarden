@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -181,6 +182,9 @@ public class CareManager : MonoBehaviour
                     RewardManager.Instance.GenerateCareLargeReward();
                     currentPlant.UpdateStageChangeTime();
                     currentPlant.SetStage(++currentPlant.currentStage);
+
+                    var orderManagementProgress = GuideMapper.GetGuideProgress(GuideStep.OrderManagement);
+                    GuideMapper.SetGuideProgress(GuideStep.OrderManagement, orderManagementProgress + 0.5f);
                 }
                 else
                 {
