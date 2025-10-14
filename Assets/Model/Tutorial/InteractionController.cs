@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using NUnit.Framework;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class InteractionController
 {
     public GameObject activeObject;
+    private Dictionary<Button, bool> changedButtons = new Dictionary<Button, bool>();
 
     public void BlockAllExcept(GameObject obj)
     {
@@ -32,6 +35,7 @@ public class InteractionController
         foreach (var button in buttons)
         {
             if (button == null) continue;
+            changedButtons.Add(button, button.interactable);
             var isActive = IsChildOrSame(button.gameObject, activeObject);
             button.interactable = isActive;
         }
@@ -63,11 +67,11 @@ public class InteractionController
             collider.enabled = true;
         }
 
-        var buttons = GameObject.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        foreach (var button in buttons)
+        foreach (var button in changedButtons)
         {
-            if (button == null) continue;
-            button.interactable = true;
+            button.Key.interactable = button.Value;
         }
+
+        changedButtons.Clear();
     }
 }

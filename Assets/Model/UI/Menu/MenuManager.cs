@@ -1,3 +1,4 @@
+﻿using Assets.Scripts.Common;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +38,36 @@ public class MenuManager : MonoBehaviour
         PlantingManager.OnPlantingMenuClosed += closeMenu;
         OrderManager.OnOrderAdded += (order) => notification.SetActive(true);
         OrderManager.OnAllOrdersComplete += () => notification.SetActive(false);
+
+        if (!GuideMapper.IsGuideComplete(GuideStep.OrderManagement))
+        {
+            var orderMenuButton = GardenCanvas.transform.GetChild(0).gameObject;
+            orderMenuButton.SetActive(false);
+            GardernManager.OnGardenOpen += () =>
+            {
+                if (GuideMapper.GetGuideProgress(GuideStep.OrderManagement) >= 1)
+                {
+                    orderMenuButton.SetActive(true);
+                    if (!GuideMapper.IsGuideComplete(GuideStep.OrderManagement))
+                    {
+                        _ = TutorialManager.Instance.SetTap(GardenCanvas.transform.GetChild(0).gameObject, true);
+                    }
+                }
+            };
+
+            OrderManager.OnGardenOpen += async () =>
+            {
+                if (!GuideMapper.IsGuideComplete(GuideStep.OrderManagement))
+                {
+                    await Task.Yield();
+                    await TutorialManager.Instance.SetTap(OrderManagerUI.Instance.careButton.gameObject, true);
+                };
+            };
+            OrderManager.OnOrderСomplete += (order) =>
+            {
+                GuideMapper.Complete(GuideStep.OrderManagement);
+            };
+        }
     }
 
     private async void Start()

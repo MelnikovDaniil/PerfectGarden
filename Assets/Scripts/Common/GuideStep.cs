@@ -12,5 +12,6 @@ namespace Assets.Scripts.Common
         PlantPlaceSelection,
         PotSelection,
         SeedSelection,
+        OrderManagement,
     }
 }

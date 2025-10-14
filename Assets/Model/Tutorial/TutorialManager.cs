@@ -37,6 +37,8 @@ public class TutorialManager : MonoBehaviour
 
     public async Task SetTap(GameObject obj, bool isBlocking = false, CancellationToken token = default)
     {
+        if (token.IsCancellationRequested) return;
+
         Func<bool> clickCondition = null;
         var conditionDone = false;
         if (obj.TryGetComponent(out Button button))
