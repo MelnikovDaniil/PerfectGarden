@@ -21,7 +21,7 @@ public class SeedPlantEventHandler : PlantEventHandler
 
         seedPackage.gameObject.SetActive(true);
         seedPackage.interactable = false;
-        seedPackage.SetUp(Context.PackageSprite, Context.SeedSprite);
+        seedPackage.SetUp(Context.plantInfo.packageSprite, Context.plantInfo.seedSprite);
         seedPackage.transform.localPosition = Vector3.zero;
 
         seedPlantAnimator.gameObject.SetActive(true);

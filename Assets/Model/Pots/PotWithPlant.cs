@@ -137,10 +137,10 @@ public class PotWithPlant : MonoBehaviour
     ///// </summary>
     ///// <param name="careEvent"></param>
     ///// <returns></returns>
-    public CareState GetState(CareEvent careEvent)
-    {
-        return (CareState)states.Find(x => x.EventName.Equals(careEvent));
-    }
+    //public CareState GetState(CareEvent careEvent)
+    //{
+    //    return (CareState)states.Find(x => x.EventName.Equals(careEvent));
+    //}
 
     public void CompleteState<TEvent>(TEvent careEvent) where TEvent : Enum
     {

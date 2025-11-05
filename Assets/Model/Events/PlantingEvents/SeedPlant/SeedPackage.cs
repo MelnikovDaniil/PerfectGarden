@@ -8,20 +8,39 @@ public class SeedPackage : MonoBehaviour
     [SerializeField] private ParticleSystem _unpackParticles;
 
     public bool interactable;
+    private Sprite _defaultPackageSprite;
+    private Sprite _defaultSeedSprite;
     private Collider _collider;
 
     private void Awake()
     {
         _collider = GetComponent<SphereCollider>();
+        _defaultPackageSprite = _seedPackageRenderer.sprite;
+        _defaultSeedSprite = _seed.seedRenderer.sprite;
     }
 
     public void SetUp(Sprite packageSprite, Sprite seedSprite)
     {
         _seedPackageRenderer.enabled = true;
         _collider.enabled = true;
-        _seedPackageRenderer.sprite = packageSprite ?? _seedPackageRenderer.sprite;
+        if (packageSprite != null)
+        {
+            _seedPackageRenderer.sprite = packageSprite;
+        }
+        else
+        {
+            _seedPackageRenderer.sprite = _defaultPackageSprite;
+        }
         _seed.Setup();
-        _seed.seedRenderer.sprite = seedSprite ?? _seed.seedRenderer.sprite;
+        if (seedSprite != null)
+        {
+            _seed.seedRenderer.sprite = seedSprite;
+        }
+        else
+        {
+            _seed.seedRenderer.sprite = _defaultSeedSprite;
+        }
+
         _seed.transform.localPosition = Vector3.zero;
     }
 
