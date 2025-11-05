@@ -40,7 +40,7 @@ MonoBehaviour:
     requiredEvents: 00000000
     optionalEvents: []
   rottenStage: {fileID: 2923515026974483440, guid: ecfef545f997380449532420d28a60a8, type: 3}
-  seedSprite: {fileID: 0}
-  packageSprite: {fileID: 0}
-  shopSprite: {fileID: -159018656, guid: 340f4dfaf1b3ec5478e7f301e68c9556, type: 3}
+  seedSprite: {fileID: 1683617535, guid: 5f325abafeabc04469b80820546e0723, type: 3}
+  packageSprite: {fileID: -1997830078, guid: a48998ebbaa776f4e9c9e564577847d3, type: 3}
+  shopSprite: {fileID: 576721081, guid: 851e1533411d6ba4b9990fe1f6c3e370, type: 3}
   seedPrice: 15

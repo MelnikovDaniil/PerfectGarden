@@ -18,7 +18,7 @@ public class SeedSelectionEventHandler : PlantEventHandler
 
     private void Start()
     {
-        MoneyMapper.Money = 6; // 10000;
+        MoneyMapper.Money = 10; // 10000;
         plantProducts = Resources.LoadAll<PlantInfo>("Plants")
             .OrderBy(x => x.seedPrice)
             .Select(plant =>
