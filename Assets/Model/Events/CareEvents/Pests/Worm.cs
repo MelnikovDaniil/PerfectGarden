@@ -11,6 +11,7 @@ public class Worm : MonoBehaviour
 {
     public Animator animator;
     [NonSerialized] public bool isCatched;
+    [NonSerialized] public bool isActive;
 
     private bool isAppeared;
     private float appearanceRate;
@@ -39,12 +40,19 @@ public class Worm : MonoBehaviour
     {
         while (!isCatched)
         {
-            yield return new WaitForSeconds(appearanceRate);
-            animator.Play("Worm_Appearance", 0, 0);
-            isAppeared = true;
-            yield return new WaitForSeconds(appearanceTime);
-            isAppeared = false;
-            animator.Play("Worm_Disappearance", 0, 0);
+            if (isActive)
+            {
+                yield return new WaitForSeconds(appearanceRate);
+                animator.Play("Worm_Appearance", 0, 0);
+                isAppeared = true;
+                yield return new WaitForSeconds(appearanceTime);
+                isAppeared = false;
+                animator.Play("Worm_Disappearance", 0, 0);
+            }
+            else
+            {
+                yield return new WaitForEndOfFrame();
+            }
         }
     }
     public bool TryPullOut()

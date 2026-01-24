@@ -14,6 +14,7 @@ public class WateringEventHandler : PlantEventHandler
     protected override async Task PrepareHandlingAsync(CancellationToken token = default)
     {
         state = Context.PotWithPlant.GetState<WateringState<PlantingEvent>>();
+        state.EnableSounds();
         Context.PotWithPlant.gameObject.SetActive(true);
         Context.PotWithPlant.transform.parent = potTransformParent;
 
@@ -40,6 +41,7 @@ public class WateringEventHandler : PlantEventHandler
             }
             await Task.Yield();
         }
+        await Task.Delay(1500);
         await MovementHelper.MoveObjectAwayAsync(wateringCan.transform, Vector3.up, 0.3f, true);
     }
 

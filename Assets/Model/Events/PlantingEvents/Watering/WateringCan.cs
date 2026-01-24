@@ -3,6 +3,8 @@
 [RequireComponent(typeof(Rigidbody), typeof(DragAndDrop))]
 public class WateringCan : MonoBehaviour
 {
+    public AudioClip wateringClip;
+    public SoundGroup grabCanClipGroup;
     public ParticleSystem waterParticles;
     public ParticleSystem splashParticles;
     public float rotationAngle = 15f;
@@ -11,6 +13,7 @@ public class WateringCan : MonoBehaviour
     private DragAndDrop _dragAndDrop;
     private Rigidbody _rigidbody;
 
+    private SMSound existingIstanceSound;
     private Quaternion initialRotation;
     private Quaternion targetRotation;
     private bool isWatering = false;
@@ -51,6 +54,10 @@ public class WateringCan : MonoBehaviour
     public void StopWatering()
     {
         ableToInteract = false;
+        if (existingIstanceSound != null)
+        {
+            existingIstanceSound.Stop();
+        }
         if (_dragAndDrop == null)
         {
             _dragAndDrop = GetComponent<DragAndDrop>();
@@ -61,12 +68,17 @@ public class WateringCan : MonoBehaviour
     private void OnMouseDown()
     {
         isWatering = true;
+        SoundManager.PlaySound(grabCanClipGroup.audioClips.GetRandom());
+        existingIstanceSound = SoundManager.PlaySound(wateringClip);
+        existingIstanceSound.SetLooped(true);
         waterParticles.Play();
     }
 
     private void OnMouseUp()
     {
         isWatering = false;
+        existingIstanceSound.SetLooped(false);
+        existingIstanceSound.Stop();
         waterParticles.Stop();
     }
 }

@@ -13,6 +13,7 @@ public class PestsCareEventHandler : CareEventHandler
     [Header("Settings")]
     public float cameraZoom = 6;
     public Vector3 cameraOffset;
+    public AudioClip completeClip;
 
     private LayerMask pestsMask;
     private bool pullingOutStarted = false;
@@ -44,6 +45,7 @@ public class PestsCareEventHandler : CareEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
+        state.worms.ForEach(x => x.isActive = true);
         PlantRotationManager.Instance.SetRotationEnabled(true);
 
         foreach (var worm in state.worms)
@@ -60,6 +62,8 @@ public class PestsCareEventHandler : CareEventHandler
             }
             await Task.Yield();
         }
+
+        SoundManager.PlaySound(completeClip);
     }
 
     private async void Update()
@@ -92,6 +96,7 @@ public class PestsCareEventHandler : CareEventHandler
 
     public override void Clear()
     {
+        state.worms.ForEach(x => x.isActive = false);
         PlantRotationManager.Instance.SetRotationEnabled(false);
         pincetInstance.gameObject.SetActive(false);
         pincetInstance.transform.parent = transform;

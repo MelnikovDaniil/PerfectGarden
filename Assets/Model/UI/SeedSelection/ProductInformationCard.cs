@@ -34,7 +34,7 @@ public class PlantInformationCard : MonoBehaviour
         {
             takeButtonText.text = productInfo.Price.ToString();
             takeButton.onClick.AddListener(() => OnPurchase?.Invoke());
-            if (productInfo.IsPartiallyVisible)
+            if (!productInfo.IsUnlocked)
             {
                 previewImage.color = Color.black;
                 nameText.text = "???";

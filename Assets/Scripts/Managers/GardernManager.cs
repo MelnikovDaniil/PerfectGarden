@@ -253,14 +253,14 @@ public class GardernManager : MonoBehaviour
             createdPotWithPlant.waitingCareEvents = state.waitingCareEvents;
             createdPotWithPlant.lastStageChangeTime = new DateTime(state.lastCareTimeUtc);
             createdPotWithPlant.lastCareAddedTime = new DateTime(state.lastStatusUpdateTimeUtc);
-            if (createdPotWithPlant.IsShouldBeRotted)
-            {
-                createdPotWithPlant.Rot();
-            }
-            else
+            if (!createdPotWithPlant.IsShouldBeRotted)
             {
                 createdPotWithPlant.SetStage(state.currentStage);
             }
+            //else
+            //{
+            //    createdPotWithPlant.Rot(); // Break sound
+            //}
             BuffManager.Instance.ApplyBuffs(createdPotWithPlant, state.buffs);
             PlacePlant(createdPotWithPlant);
             growingPlants.Add(createdPotWithPlant);

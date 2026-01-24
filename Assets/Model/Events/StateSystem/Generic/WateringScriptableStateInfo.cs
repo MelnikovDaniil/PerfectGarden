@@ -8,6 +8,10 @@ public abstract class WateringScriptableStateInfo<TEvent> : ScriptableStateInfo<
     [Space]
     public float targetWateringParticlesAmount = 70;
     public float targetWateringBrightness = 0.5f;
+    public AudioClip wateringClip;
+    public AudioClip wateringCompleteClip;
+    public AudioClip wateringCompleteKalimbaClip;
+    public ParticleSystem CompleteParticlesPrefab;
     public ParticleSystem DustParticlesPrefab;
     public ParticleSystem splashParticlesPrefab;
     public Color dryColor = new Color(1f, 1f, 1f);

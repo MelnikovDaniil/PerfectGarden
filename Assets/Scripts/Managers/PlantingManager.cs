@@ -16,7 +16,6 @@ public class PlantingManager : MonoBehaviour
     public List<ScriptableStateInfo<PlantingEvent>> stateInfos;
 
     [SerializeField] private CareMenu CareCanvas;
-    [SerializeField] private FinishPlanting finishPlantingCanvas;
     private CancellationTokenSource tokenSource;
 
     private List<PlantEventHandler> plantingEventHandlers;
@@ -63,34 +62,23 @@ public class PlantingManager : MonoBehaviour
                     Destroy(plantingContext.PotWithPlant.gameObject);
                 }
 
-                finishPlantingCanvas.HideMenu();
                 OnPlantingMenuClosed?.Invoke();
                 OnPlantingCancel?.Invoke();
                 return;
             }
         }
 
-        finishPlantingCanvas.ShowMenu();
-        finishPlantingCanvas.finishPlantingButton.onClick.RemoveAllListeners();
-        finishPlantingCanvas.finishPlantingButton.onClick.AddListener(() =>
-        {
-            plantingContext.OnPlantingFinished?.Invoke();
-            OnPlantingFinished?.Invoke(plantingContext.PotWithPlant);
-            OnPlantingMenuClosed?.Invoke();
-            finishPlantingCanvas.HideMenu();
-        });
-
         plantingContext.PotWithPlant.cell = tilePostion;
         plantingContext.PotWithPlant.transform.parent = null;
         plantingContext.PotWithPlant.gameObject.SetActive(true);
-        plantingContext.PotWithPlant.SetStage(0);
-        plantingContext.PotWithPlant.UpdateStageChangeTime();
+        plantingContext.OnPlantingFinished?.Invoke();
+        OnPlantingFinished?.Invoke(plantingContext.PotWithPlant);
+        OnPlantingMenuClosed?.Invoke();
     }
 
     public void CancelPlanting()
     {
         tokenSource.Cancel();
-        finishPlantingCanvas.HideMenu();
         OnPlantingCancel?.Invoke();
     }
 }

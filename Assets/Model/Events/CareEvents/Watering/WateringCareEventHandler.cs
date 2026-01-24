@@ -15,6 +15,7 @@ public class WateringCareEventHandler : CareEventHandler
     {
         // Disable care rotation
         state = Context.PotWithPlant.GetState<WateringState<CareEvent>>();
+        state.EnableSounds();
         Context.PotWithPlant.gameObject.SetActive(true);
         Context.PotWithPlant.transform.parent = potTransformParent;
 
@@ -40,11 +41,13 @@ public class WateringCareEventHandler : CareEventHandler
             }
             await Task.Yield();
         }
+        await Task.Delay(1500);
         await MovementHelper.MoveObjectAwayAsync(wateringCan.transform, Vector3.up, 0.3f, true);
     }
 
     protected override async Task InterruptHandlingAsync()
     {
+        state.DisableSounds();
         await MovementHelper.MoveObjectAwayAsync(wateringCan.transform, Vector3.up, 0.3f, true);
         await base.InterruptHandlingAsync();
     }
