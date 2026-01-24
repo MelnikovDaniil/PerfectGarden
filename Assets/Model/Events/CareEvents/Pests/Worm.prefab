@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 6718199475116676340}
   - component: {fileID: 7948264875354473750}
   - component: {fileID: 7316859717827910325}
+  - component: {fileID: 8433224636638588233}
   m_Layer: 11
   m_Name: Worm
   m_TagString: Untagged
@@ -177,3 +178,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 7948264875354473750}
+--- !u!114 &8433224636638588233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3031208757360507410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e4eba045d06b624494bc39058bf38ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundGroups:
+  - groupName: Appearence
+    audioClips:
+    - {fileID: 8300000, guid: 9d3b1e52a3b7f114bacb2df90a1743d9, type: 3}
+    - {fileID: 8300000, guid: 6083214ae3f05e740ba050a4d78c41eb, type: 3}
+    - {fileID: 8300000, guid: 01d915cca61ef1049a430007c7c683b6, type: 3}
+  - groupName: Hide
+    audioClips:
+    - {fileID: 8300000, guid: 1848e30d2bcb08a4e8f00fdd19a8a37c, type: 3}

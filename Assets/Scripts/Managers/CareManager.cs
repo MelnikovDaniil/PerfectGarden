@@ -24,6 +24,8 @@ public class CareManager : MonoBehaviour
 
     public Transform carePlace;
     public Transform plantPlace;
+    public AudioClip plantDeath;
+    public AudioClip plantNewCareClip;
 
     private CancellationTokenSource eventCancellationSource;
 
@@ -44,29 +46,45 @@ public class CareManager : MonoBehaviour
 
     public void GenerateCare(List<PotWithPlant> potWithPlants)
     {
-        foreach (var potWithPlant in potWithPlants.Where(x => !x.IsDied))
+        var livePlant = potWithPlants.Where(x => !x.IsDied);
+        if (livePlant.Any())
         {
-            if (!potWithPlant.IsShouldBeRotted)
-
+            var newRottenPlant = false;
+            var newCare = false;
+            foreach (var potWithPlant in livePlant)
             {
-                if (potWithPlant.IsNewCare() && !potWithPlant.IsLastStage)
+                if (!potWithPlant.IsShouldBeRotted)
                 {
-                    var plantStage = potWithPlant.plantInfo.growStages[potWithPlant.currentStage];
+                    if (potWithPlant.IsNewCare() && !potWithPlant.IsLastStage)
+                    {
+                        newCare = true;
+                        var plantStage = potWithPlant.plantInfo.growStages[potWithPlant.currentStage];
 
-                    var newEvents = plantStage.requiredEvents.Where(x => !potWithPlant.waitingCareEvents.Contains(x)).ToList();
-                    var numberOfEventsLeft = Mathf.Clamp(careEventStageAmount - newEvents.Count, 0, careEventStageAmount);
+                        var newEvents = plantStage.requiredEvents.Where(x => !potWithPlant.waitingCareEvents.Contains(x)).ToList();
+                        var numberOfEventsLeft = Mathf.Clamp(careEventStageAmount - newEvents.Count, 0, careEventStageAmount);
 
-                    newEvents.AddRange(TakeRandomOptionalEvent(plantStage.optionalEvents, numberOfEventsLeft));
-                    potWithPlant.waitingCareEvents.AddRange(newEvents);
-                    potWithPlant.waitingCareEvents = potWithPlant.waitingCareEvents.Distinct().ToList();
-                    potWithPlant.lastCareAddedTime = DateTime.UtcNow;
+                        newEvents.AddRange(TakeRandomOptionalEvent(plantStage.optionalEvents, numberOfEventsLeft));
+                        potWithPlant.waitingCareEvents.AddRange(newEvents);
+                        potWithPlant.waitingCareEvents = potWithPlant.waitingCareEvents.Distinct().ToList();
+                        potWithPlant.lastCareAddedTime = DateTime.UtcNow;
+                    }
+
+                    GenerateStates(potWithPlant);
                 }
-
-                GenerateStates(potWithPlant);
+                else
+                {
+                    newRottenPlant = true;
+                    potWithPlant.Rot();
+                }
             }
-            else
+
+            if (newRottenPlant)
             {
-                potWithPlant.Rot();
+                SoundManager.PlaySound(plantDeath);
+            }
+            else if (newCare)
+            {
+                SoundManager.PlaySound(plantNewCareClip);
             }
         }
     }
@@ -167,7 +185,7 @@ public class CareManager : MonoBehaviour
         await eventHandler.PrepareAsync(eventCancellationSource.Token);
         await eventHandler.StartAsync(eventCancellationSource.Token);
         eventHandler.Clear();
-        await Task.Delay((int)(CameraManager.Instanse.transitionDuration * 1000));
+        await Task.Delay((int)(CameraManager.Instanse.defaultTransitionDuration * 1000));
 
         PlantRotationManager.Instance.SetRotationEnabled(true);
         if (eventHandler.Status == HandlingStatus.Finished)
@@ -226,7 +244,7 @@ public class CareManager : MonoBehaviour
         await eventHandler.PrepareAsync(eventCancellationSource.Token);
         await eventHandler.StartAsync(eventCancellationSource.Token);
         eventHandler.Clear();
-        await Task.Delay((int)(CameraManager.Instanse.transitionDuration * 1000));
+        await Task.Delay((int)(CameraManager.Instanse.defaultTransitionDuration * 1000));
         if (eventHandler.Status == HandlingStatus.Finished)
         {
             BuffManager.Instance.ApplyBuff(currentPlant, buffType);

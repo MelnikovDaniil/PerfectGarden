@@ -17,7 +17,7 @@ MonoBehaviour:
   plantingEvents: 000102030405
   growStages:
   - stagePlant: {fileID: 6069550241057152547, guid: 0321880b615736646bbb8182dc181251, type: 3}
-    requiredEvents: 00000000
+    requiredEvents: 0000000004000000
     optionalEvents:
     - careEvent: 2
       chance: 2

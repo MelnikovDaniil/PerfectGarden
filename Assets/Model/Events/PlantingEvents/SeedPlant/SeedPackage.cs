@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class SeedPackage : MonoBehaviour
 {
+    [SerializeField] private AudioClip packageOpenClip;
     [SerializeField] private SpriteRenderer _seedPackageRenderer;
     [SerializeField] private Seed _seed;
     [SerializeField] private ParticleSystem _unpackParticles;
@@ -48,6 +49,7 @@ public class SeedPackage : MonoBehaviour
     {
         if (interactable)
         {
+            SoundManager.PlaySound(packageOpenClip);
             _unpackParticles.Play();
             _seedPackageRenderer.enabled = false;
             _seed.Drop();

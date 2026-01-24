@@ -220,6 +220,7 @@ public class PotWithPlant : MonoBehaviour
     {
         if (collision.tag == "seed")
         {
+            collision.GetComponent<Seed>().Plant();
             OnSeedPlant?.Invoke();
         }
     }

@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetWateringParticlesAmount: 140
   targetWateringBrightness: 0.5
+  wateringClip: {fileID: 8300000, guid: 50de2df9f1240ad4d9ff35ab17492187, type: 3}
+  wateringCompleteClip: {fileID: 8300000, guid: cb4fef590162f9b4890fbea83f345b3e, type: 3}
+  wateringCompleteKalimbaClip: {fileID: 8300000, guid: f1e8de951378ceb44aecd7620b57b896, type: 3}
+  CompleteParticlesPrefab: {fileID: 8357513333140180132, guid: 6a02846985bab3b48ac551a12f388e47, type: 3}
   DustParticlesPrefab: {fileID: 5450816155774467655, guid: ff4dbbc0c98917745bdb054619f315fb, type: 3}
   splashParticlesPrefab: {fileID: 467080169286145235, guid: 2c5cad677b861e14fafd99d7dc7c8075, type: 3}
   dryColor: {r: 1, g: 1, b: 1, a: 1}

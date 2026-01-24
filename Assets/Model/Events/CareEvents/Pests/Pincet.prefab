@@ -158,6 +158,18 @@ MonoBehaviour:
   backToPositionTime: 1
   successfulGrabDelay: 1
   successfulGrabMagnitude: 0.05
+  pincetClip: {fileID: 8300000, guid: fc8af744cd34d6141b9aaaaf83e72fa6, type: 3}
+  warmExtractionClip: {fileID: 8300000, guid: ae58e7fdc485f7246bbab8420ff522ef, type: 3}
+  warmRabbingClips:
+  - {fileID: 8300000, guid: 759fc016310181c48a9a28edf225568e, type: 3}
+  - {fileID: 8300000, guid: 807ed67cab935dd4e8b35a0f3543c66c, type: 3}
+  - {fileID: 8300000, guid: 4485b196fc7c45a4196f6f883cd30cf0, type: 3}
+  - {fileID: 8300000, guid: ccf5a09d4da59564898d0f92de56e5c0, type: 3}
+  - {fileID: 8300000, guid: 2f6c7447c1afed447aa9c21494b02f53, type: 3}
+  pincetFailedClips:
+  - {fileID: 8300000, guid: 11839e9549b0f5441b08b863c254afdd, type: 3}
+  - {fileID: 8300000, guid: f5efe8009bbd3904b9951bf3a7b6c5e0, type: 3}
+  - {fileID: 8300000, guid: f861304a08d4b504c92fad4099805129, type: 3}
 --- !u!1 &7852877049231621847
 GameObject:
   m_ObjectHideFlags: 0

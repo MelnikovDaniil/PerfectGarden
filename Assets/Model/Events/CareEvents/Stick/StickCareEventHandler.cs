@@ -8,8 +8,14 @@ public class StickCareEventHandler : CareEventHandler
     [Space]
     public Stick strickPrefab;
     public Vector2 stickStartPosition;
+    public ParticleSystem groundParticlesPrefab;
+    public ParticleSystem leavesParticlesPrefab;
 
     public override CareEvent EventName => CareEvent.Stick;
+
+
+    private ParticleSystem groundParticles;
+    private ParticleSystem leavesParticles;
 
     private Stick createdStick;
 
@@ -26,6 +32,13 @@ public class StickCareEventHandler : CareEventHandler
         startTouchPosition = null;
         endTouchPosition = null;
 
+        if (!groundParticles)
+        {
+            groundParticles = Instantiate(groundParticlesPrefab);
+            groundParticles.transform.position = Context.PotWithPlant.dirtCollider.transform.position;
+            leavesParticles = Instantiate(leavesParticlesPrefab);
+            leavesParticles.transform.position = Context.PotWithPlant.plantRenderer.transform.position;
+        }
         createdStick = Instantiate(strickPrefab, Context.PotWithPlant.gameObject.transform);
         createdStick.transform.localPosition = stickStartPosition;
 
@@ -47,9 +60,9 @@ public class StickCareEventHandler : CareEventHandler
             await Task.Yield();
         }
 
+        groundParticles.Play();
+        leavesParticles.Play();
         await AnimatorHelper.PlayAnimationForTheEndAsync(createdStick.animator, "Stick_Install");
-
-        await Task.CompletedTask;
     }
 
     public override void Clear()

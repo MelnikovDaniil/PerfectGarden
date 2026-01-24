@@ -24,6 +24,7 @@ public class ProductMiniCard : MonoBehaviour
 
         previewImage.sprite = productInfo.Preview;
         previewImage.color = Color.white;
+        cardButton.onClick.RemoveAllListeners();
         cardButton.onClick.AddListener(() => OnDetailedView?.Invoke());
 
         if (productInfo.ItemsAvaliable > 0)

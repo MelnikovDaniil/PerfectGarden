@@ -1,8 +1,11 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider), typeof(SpriteRenderer))]
 public class Seed : MonoBehaviour
 {
+    public List<AudioClip> seedPlantClips;
     public SpriteRenderer seedRenderer;
     private Rigidbody _rigidbody;
 
@@ -19,6 +22,12 @@ public class Seed : MonoBehaviour
         transform.localPosition = Vector3.zero;
         gameObject.SetActive(true);
         _rigidbody.isKinematic = true;
+    }
+
+    public void Plant()
+    {
+        SoundManager.PlaySound(seedPlantClips.GetRandom());
+        gameObject.SetActive(false);
     }
 
     public void Drop()
