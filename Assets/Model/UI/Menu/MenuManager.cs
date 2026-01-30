@@ -20,6 +20,7 @@ public class MenuManager : MonoBehaviour
     {
         Action openMenu = () =>
         {
+            CameraManager.Instanse.SwitchCamera(true);
             wasGardenCanvasActive = GardenCanvas.gameObject.activeSelf;
             wasOrderCanvasActive = OrderCanvas.gameObject.activeSelf;
 
@@ -29,6 +30,7 @@ public class MenuManager : MonoBehaviour
 
         Action closeMenu = () =>
         {
+            CameraManager.Instanse.SwitchCamera(false);
             GardenCanvas.gameObject.SetActive(wasGardenCanvasActive);
             OrderCanvas.gameObject.SetActive(wasOrderCanvasActive);
         };

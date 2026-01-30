@@ -8,6 +8,11 @@ public class CameraManager : MonoBehaviour
     public Camera mainCamera;
     public float defaultTransitionDuration = 1.0f;
 
+    [Header("Cameras")]
+    public Camera careCamera;
+    public Vector3 careCameraPosition = new Vector3(1f, 1f, 0.5f);
+    public Quaternion careCameraRotation = new Quaternion(0.16042997f, 0.37686962f, -0.066452265f, 0.9098438f);
+
     [Header("Test settings")]
     public GameObject objToLook;
     public float testDistance;
@@ -23,6 +28,9 @@ public class CameraManager : MonoBehaviour
     private Coroutine currentTransition;
     private Coroutine currentShakeCoroutine;
     private float originalOrthographicSize;
+    private Vector3 startPosition;
+    private Quaternion startRotation;
+    private Camera currentCamera;
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private Vector3 basePosition;
@@ -37,10 +45,13 @@ public class CameraManager : MonoBehaviour
     private void Start()
     {
         originalOrthographicSize = mainCamera.orthographicSize;
+        startPosition = transform.position;
+        startRotation = transform.rotation;
         originalPosition = transform.position;
         originalRotation = transform.rotation;
         basePosition = originalPosition;
         baseRotation = originalRotation;
+        currentCamera = mainCamera;
     }
 
     private void Update()
@@ -50,6 +61,20 @@ public class CameraManager : MonoBehaviour
             basePosition = transform.position;
             baseRotation = transform.rotation;
         }
+    }
+
+    public void SwitchCamera(bool careCameraEnable)
+    {
+        careCamera.gameObject.SetActive(careCameraEnable);
+        mainCamera.gameObject.SetActive(!careCameraEnable);
+
+        originalPosition = careCameraEnable ? careCameraPosition : startPosition;
+        originalRotation = careCameraEnable ? careCameraRotation : startRotation;
+        originalOrthographicSize = careCameraEnable ? careCamera.orthographicSize : mainCamera.orthographicSize;
+        transform.position = originalPosition;
+        transform.rotation = originalRotation;
+
+        currentCamera = careCameraEnable ? careCamera : mainCamera;
     }
 
     public void ReturnToOriginalPosition(float? transitionDuration = null)
@@ -176,7 +201,7 @@ public class CameraManager : MonoBehaviour
         var startPosition = transform.position;
         var startRotation = transform.rotation;
         var targetRotation = Quaternion.LookRotation(lookAtPosition - targetPosition);
-        var startOrthographicSize = mainCamera.orthographicSize;
+        var startOrthographicSize = currentCamera.orthographicSize;
 
         var elapsedTime = 0.0f;
 
@@ -200,7 +225,7 @@ public class CameraManager : MonoBehaviour
                 baseRotation = Quaternion.Slerp(startRotation, targetRotation, t);
             }
 
-            mainCamera.orthographicSize = Mathf.Lerp(startOrthographicSize, targetOrthographicSize, t);
+            currentCamera.orthographicSize = Mathf.Lerp(startOrthographicSize, targetOrthographicSize, t);
 
             elapsedTime += Time.deltaTime;
             yield return null;
@@ -217,7 +242,7 @@ public class CameraManager : MonoBehaviour
             baseRotation = Quaternion.LookRotation(lookAtPosition - targetPosition);
         }
 
-        mainCamera.orthographicSize = targetOrthographicSize;
+        currentCamera.orthographicSize = targetOrthographicSize;
     }
 
     private Vector3 GetTargetPosition(Vector3 pointToLook, Vector3 offset, float zoom)

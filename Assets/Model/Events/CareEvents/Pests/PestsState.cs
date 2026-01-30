@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -41,6 +42,7 @@ public class PestsState : CareState
 
     public Vector3 GetGroupPosition()
     {
+        worms.RemoveAll(x => x == null);
         if (worms == null || !worms.Any())
         {
             return Vector3.zero;
@@ -58,6 +60,7 @@ public class PestsState : CareState
     public void PullOutWorm()
     {
         wormNumberLeft--;
+        worms.RemoveAll(x => x == null);
     }
 
     private Vector3 GetRandomPointAround(Collider collider, Vector3 center, float radius)
