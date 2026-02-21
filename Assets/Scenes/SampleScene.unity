@@ -11468,6 +11468,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 966283158}
     - target: {fileID: 8329998472363714520, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: deathParticles
+      value: 
+      objectReference: {fileID: 8501220558904465895, guid: 6c295177cb8cf95409a870768992dff9, type: 3}
+    - target: {fileID: 8329998472363714520, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: newCareParticles
+      value: 
+      objectReference: {fileID: 67145423301276978, guid: 133ce3ff2966afc4d84bcbd4d44aaf82, type: 3}
+    - target: {fileID: 8329998472363714520, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
       propertyPath: plantNewCareClip
       value: 
       objectReference: {fileID: 8300000, guid: dcb3b98436c60f34aa501d023e7ce20e, type: 3}
@@ -11811,7 +11819,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 384155486908077533, guid: b8bbdc50db79b514d852cdc50a84c10f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 804649105081221409, guid: b8bbdc50db79b514d852cdc50a84c10f, type: 3}
       propertyPath: m_AnchorMax.y

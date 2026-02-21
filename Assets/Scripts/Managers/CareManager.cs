@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using static UnityEditor.U2D.ScriptablePacker;
+using static UnityEngine.ParticleSystem;
 using Random = UnityEngine.Random;
 
 public class CareManager : MonoBehaviour
@@ -26,6 +27,8 @@ public class CareManager : MonoBehaviour
     public Transform plantPlace;
     public AudioClip plantDeath;
     public AudioClip plantNewCareClip;
+    public ParticleSystem deathParticles;
+    public ParticleSystem newCareParticles;
 
     private CancellationTokenSource eventCancellationSource;
 
@@ -67,6 +70,9 @@ public class CareManager : MonoBehaviour
                         potWithPlant.waitingCareEvents.AddRange(newEvents);
                         potWithPlant.waitingCareEvents = potWithPlant.waitingCareEvents.Distinct().ToList();
                         potWithPlant.lastCareAddedTime = DateTime.UtcNow;
+                        var particles = Instantiate(newCareParticles, potWithPlant.transform);
+                        particles.transform.localPosition = Vector3.zero;
+                        particles.Play();
                     }
 
                     GenerateStates(potWithPlant);
@@ -75,6 +81,9 @@ public class CareManager : MonoBehaviour
                 {
                     newRottenPlant = true;
                     potWithPlant.Rot();
+                    var particles = Instantiate(deathParticles, potWithPlant.transform);
+                    particles.transform.localPosition = Vector3.zero;
+                    particles.Play();
                 }
             }
 
