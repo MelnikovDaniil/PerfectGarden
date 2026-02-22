@@ -4,25 +4,25 @@ public static class ColliderExtensions
 {
     public static Vector3 GetRandomPointInCollider(this Collider collider)
     {
-        var bounds = collider.bounds;
+        var worldBounds = collider.bounds;
 
         for (var i = 0; i < 100; i++)
         {
-            var localRandomPoint = new Vector3(
-                Random.Range(bounds.min.x, bounds.max.x),
-                0,
-                Random.Range(bounds.min.z, bounds.max.z)
+            var randomPoint = new Vector3(
+                Random.Range(-worldBounds.size.x, worldBounds.size.x) / 4,
+                worldBounds.max.y,
+                Random.Range(-worldBounds.size.z, worldBounds.size.z) / 4
             );
+            var worldRandomPoint = randomPoint + collider.transform.position;
+            var closestPoint = collider.ClosestPoint(worldRandomPoint);
 
-            var randomPoint = collider.transform.TransformPoint(localRandomPoint);
-            // Check if the random point is inside the collider using Collider.ClosestPoint
-            var closestPoint = collider.ClosestPoint(randomPoint);
-            if (closestPoint == randomPoint) // If it's the same, it means the point is inside
+            var distance = Vector3.Distance(new Vector3(closestPoint.x, 0, closestPoint.z), new Vector3(worldRandomPoint.x, 0, worldRandomPoint.z));
+            if (distance <= 0.0001)
             {
-                return localRandomPoint;
+                randomPoint.y = 0;
+                return randomPoint;
             }
         }
 
-        return Vector3.zero;
-    }
-}
+        return worldBounds.center;
+    }}

@@ -149,6 +149,8 @@ public class GardernManager : MonoBehaviour
         {
             Destroy(colliders.FirstOrDefault().gameObject);
         }
+
+        potWithPlant.gameObject.SetActive(true);
         potWithPlant.transform.position = potPosition;
         potWithPlant.transform.localRotation = Quaternion.identity;
         potWithPlant.transform.parent = gardenLocation.transform;
@@ -246,7 +248,7 @@ public class GardernManager : MonoBehaviour
         {
             var potInfo = potTypes.First(x => x.name == state.potName);
             var createdPotWithPlant = Instantiate(potInfo.potPrefab);
-
+            createdPotWithPlant.gameObject.SetActive(false);
             createdPotWithPlant.potInfo = potInfo;
             createdPotWithPlant.plantInfo = plantTypes.First(x => x.name == state.plantName);
             createdPotWithPlant.cell = state.cellPosition;
