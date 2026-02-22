@@ -6,6 +6,8 @@ public class WeedCareEventHandler : CareEventHandler
 {
     public override CareEvent EventName => CareEvent.Weed;
     public float pullThreshold = 5;
+    public float cameraZoom = 5;
+    public Vector3 cameraOffset;
 
     private bool pullingOutStarted = false;
     private LayerMask weedMask;
@@ -22,6 +24,8 @@ public class WeedCareEventHandler : CareEventHandler
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
         state = Context.PotWithPlant.GetState<WeedCareState>();
+        CameraManager.Instanse.LookAtPoint(Context.PotWithPlant.dirtCollider.transform.position, cameraZoom, cameraOffset);
+        PlantRotationManager.Instance.SetRotationEnabled(true);
         foreach (var weed in state.weeds)
         {
             _ = TutorialManager.Instance.SetSwipeAsync(weed.gameObject, Vector2.up, 1f, false, token);
@@ -79,5 +83,7 @@ public class WeedCareEventHandler : CareEventHandler
     {
         pulledWeed = null;
         pullingOutStarted = false;
+        PlantRotationManager.Instance.SetRotationEnabled(false);
+        CameraManager.Instanse.ReturnToOriginalPosition();
     }
 }

@@ -5,10 +5,15 @@ public class PlantRotationManager : MonoBehaviour
     public static PlantRotationManager Instance;
     public Transform plantPlace;
     public float rotationSpeed = 100.0f;
-    private bool isDragging = false;
+    public float dragThreshold = 10.0f;
+    public float maxVerticalRatio = 0.3f;
 
+    private bool isDragging = false;
     private bool rotationEnabled;
     private Quaternion startRotation;
+
+    private Vector2 touchStartPos;
+    private bool thresholdPassed = false;
 
     private void Awake()
     {
@@ -27,23 +32,48 @@ public class PlantRotationManager : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                isDragging = true;
+                touchStartPos = Input.mousePosition;
+                thresholdPassed = false;
+                isDragging = false;
+            }
+
+            if (Input.GetMouseButton(0))
+            {
+                if (!thresholdPassed)
+                {
+                    Vector2 currentPos = Input.mousePosition;
+                    Vector2 delta = currentPos - touchStartPos;
+
+                    float horizontalDistance = Mathf.Abs(delta.x);
+                    float verticalDistance = Mathf.Abs(delta.y);
+
+                    if (horizontalDistance > dragThreshold)
+                    {
+                        if (verticalDistance <= horizontalDistance * maxVerticalRatio)
+                        {
+                            thresholdPassed = true;
+                            isDragging = true;
+                        }
+                    }
+                }
+
+                if (isDragging)
+                {
+                    float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
+                    plantPlace.Rotate(Vector3.up, -mouseX);
+                }
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 isDragging = false;
-            }
-
-            if (isDragging)
-            {
-                float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
-                plantPlace.Rotate(Vector3.up, -mouseX);
+                thresholdPassed = false;
             }
         }
         else if (isDragging)
         {
             isDragging = false;
+            thresholdPassed = false;
         }
     }
 

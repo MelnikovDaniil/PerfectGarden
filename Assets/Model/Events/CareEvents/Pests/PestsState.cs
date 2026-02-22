@@ -17,16 +17,14 @@ public class PestsState : CareState
     {
         worms = new List<Worm>();
         wormNumberLeft = Random.Range(pestsStateInfo.minWormNumber, pestsStateInfo.maxWormNumber);
-        var wormGroupPosition = plant.dirtCollider.GetRandomPointInCollider();
 
-        for (var i = 0; i < wormNumberLeft; i++)
+        if (plant.gameObject.activeInHierarchy)
         {
-            var createdWorm = GameObject.Instantiate(pestsStateInfo.wormPrefab, plant.dirtCollider.transform);
-            createdWorm.SetUp(
-                Random.Range(pestsStateInfo.minAppearanceRate, pestsStateInfo.maxAppearanceRate),
-                Random.Range(pestsStateInfo.minAppearanceTime, pestsStateInfo.maxAppearanceTime));
-            createdWorm.transform.localPosition = GetRandomPointAround(plant.dirtCollider, wormGroupPosition, pestsStateInfo.wormGroupRadius);
-            worms.Add(createdWorm);
+            GeneratePests(plant);
+        }
+        else
+        {
+            plant.OnEnableOnes += () => GeneratePests(plant);
         }
     }
 
@@ -63,24 +61,16 @@ public class PestsState : CareState
         worms.RemoveAll(x => x == null);
     }
 
-    private Vector3 GetRandomPointAround(Collider collider, Vector3 center, float radius)
+    private void GeneratePests(PotWithPlant plant)
     {
-        var bounds = collider.bounds;
-
-        for (var i = 0; i < 100; i++)
+        for (var i = 0; i < wormNumberLeft; i++)
         {
-            var localRandomPoint = Random.insideUnitCircle;
-            var randomPointInGroup = center + new Vector3(localRandomPoint.x, 0, localRandomPoint.y) * radius;
-
-            var randomPoint = collider.transform.TransformPoint(randomPointInGroup);
-
-            var closestPoint = collider.ClosestPoint(randomPoint);
-            if (closestPoint == randomPoint) // If it's the same, it means the point is inside
-            {
-                return randomPointInGroup;
-            }
+            var createdWorm = GameObject.Instantiate(pestsStateInfo.wormPrefab, plant.dirtCollider.transform);
+            createdWorm.SetUp(
+                Random.Range(pestsStateInfo.minAppearanceRate, pestsStateInfo.maxAppearanceRate),
+                Random.Range(pestsStateInfo.minAppearanceTime, pestsStateInfo.maxAppearanceTime));
+            createdWorm.transform.localPosition = plant.dirtCollider.GetRandomPointInCollider();
+            worms.Add(createdWorm);
         }
-
-        return Vector3.zero;
     }
 }

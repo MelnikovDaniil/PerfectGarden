@@ -15,12 +15,13 @@ public class WeedCareState : CareState
         weeds = new List<Weed>();
         weedNumberLeft = Random.Range(weedStateInfo.minWeedNumber, weedStateInfo.maxWeedNumber);
 
-        for (var i = 0; i < weedNumberLeft; i++)
+        if (plant.gameObject.activeInHierarchy)
         {
-            var createdWeed = GameObject.Instantiate(weedStateInfo.weedPrefab, plant.dirtCollider.transform);
-            createdWeed.renderer.sprite = weedStateInfo.weedSprites.GetRandom();
-            createdWeed.transform.localPosition = plant.dirtCollider.GetRandomPointInCollider();
-            weeds.Add(createdWeed);
+            GenerateWeeds(plant);
+        }
+        else
+        {
+            plant.OnEnableOnes += () => GenerateWeeds(plant);
         }
     }
 
@@ -37,5 +38,16 @@ public class WeedCareState : CareState
     public void PullOutWeed()
     {
         weedNumberLeft--;
+    }
+
+    private void GenerateWeeds(PotWithPlant plant)
+    {
+        for (var i = 0; i < weedNumberLeft; i++)
+        {
+            var createdWeed = GameObject.Instantiate(weedStateInfo.weedPrefab, plant.dirtCollider.transform);
+            createdWeed.renderer.sprite = weedStateInfo.weedSprites.GetRandom();
+            createdWeed.transform.localPosition = plant.dirtCollider.GetRandomPointInCollider();
+            weeds.Add(createdWeed);
+        }
     }
 }

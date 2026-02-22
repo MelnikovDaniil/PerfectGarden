@@ -7,6 +7,7 @@ public class PotWithPlant : MonoBehaviour
 {
     public event Action OnSeedPlant;
     public event Action OnStageChange;
+    public event Action OnEnableOnes;
 
     public Collider dirtCollider;
 
@@ -71,6 +72,12 @@ public class PotWithPlant : MonoBehaviour
         buffStates = new List<BuffState>();
         potDirtFilling = GetComponent<PotDirtFilling>();
         dirtCollider.GetComponent<MeshRenderer>().material.color = new Color(0.25f, 0.25f, 0.25f);
+    }
+
+    private void OnEnable()
+    {
+        OnEnableOnes?.Invoke();
+        OnEnableOnes = null;
     }
 
     public void SetStage(int plantStage)
@@ -230,5 +237,8 @@ public class PotWithPlant : MonoBehaviour
         Gizmos.color = Color.gray;
         var y = potBottomPostionY * transform.localScale.y;
         Gizmos.DrawLine(new Vector3(-1f, y) + transform.position, new Vector3(1f, y) + transform.position);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawCube(dirtCollider.bounds.center, dirtCollider.bounds.size);
     }
 }
