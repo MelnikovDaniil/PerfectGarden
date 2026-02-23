@@ -11495,6 +11495,34 @@ PrefabInstance:
       propertyPath: cameraOffset.z
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: groundParticlesPrefab
+      value: 
+      objectReference: {fileID: 6315404110785707078, guid: be6d13b138490e24cbaf43f8b4a98508, type: 3}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: weedPulloutClips.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: 'weedPulloutClips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 8a63082bf28bdd84bbf59daf76f1d988, type: 3}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: 'weedPulloutClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 706b93db0615975478327469221fc0df, type: 3}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: 'weedPulloutClips.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: ffbbce30584651e418323140a1aa1427, type: 3}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: 'weedPulloutClips.Array.data[3]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 2768087096faaed449d1f30fc5203486, type: 3}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: 'weedPulloutClips.Array.data[4]'
+      value: 
+      objectReference: {fileID: 8300000, guid: 576790658f2f2524f9db7efbe982c4ed, type: 3}
     - target: {fileID: 1593963111356126262, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
       propertyPath: m_Name
       value: CareManager
