@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -8,9 +10,13 @@ public class WeedCareEventHandler : CareEventHandler
     public float pullThreshold = 5;
     public float cameraZoom = 5;
     public Vector3 cameraOffset;
+    public List<AudioClip> weedPulloutClips;
+    public ParticleSystem groundParticlesPrefab;
+    public AudioClip completeClip;
 
     private bool pullingOutStarted = false;
     private LayerMask weedMask;
+    private Dictionary<Weed, ParticleSystem> weedParticles;
 
     private WeedCareState state;
 
@@ -21,9 +27,24 @@ public class WeedCareEventHandler : CareEventHandler
         weedMask = LayerMask.GetMask("Weed");
     }
 
+    protected override Task PrepareHandlingAsync(CancellationToken token = default)
+    {
+
+        state = Context.PotWithPlant.GetState<WeedCareState>();
+        weedParticles = new Dictionary<Weed, ParticleSystem>();
+        foreach (var weed in state.weeds)
+        {
+            var groundParticles = Instantiate(groundParticlesPrefab);
+            groundParticles.transform.position = weed.transform.position;
+            groundParticles.transform.parent = weed.transform;
+            weedParticles.Add(weed, groundParticles);
+        }
+
+        return base.PrepareHandlingAsync(token);
+    }
+
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
-        state = Context.PotWithPlant.GetState<WeedCareState>();
         CameraManager.Instanse.LookAtPoint(Context.PotWithPlant.dirtCollider.transform.position, cameraZoom, cameraOffset);
         PlantRotationManager.Instance.SetRotationEnabled(true);
         foreach (var weed in state.weeds)
@@ -40,6 +61,8 @@ public class WeedCareEventHandler : CareEventHandler
             }
             await Task.Yield();
         }
+
+        SoundManager.PlaySound(completeClip);
     }
 
     private void Update()
@@ -69,6 +92,8 @@ public class WeedCareEventHandler : CareEventHandler
                     Debug.Log("Weed pulled with force: " + vector.y);
                     if (vector.y >= pullThreshold)
                     {
+                        weedParticles[pulledWeed].Play();
+                        SoundManager.PlaySound(weedPulloutClips.GetRandom());
                         pulledWeed.PullOutAndDestroy();
                         state.PullOutWeed();
                     }
@@ -81,6 +106,13 @@ public class WeedCareEventHandler : CareEventHandler
 
     public override void Clear()
     {
+        foreach (var item in weedParticles.Values)
+        {
+            if (item != null && item.gameObject != null)
+            {
+                Destroy(item.gameObject);
+            }
+        } 
         pulledWeed = null;
         pullingOutStarted = false;
         PlantRotationManager.Instance.SetRotationEnabled(false);
