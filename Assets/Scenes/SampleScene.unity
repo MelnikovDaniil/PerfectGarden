@@ -11488,6 +11488,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: completeClip
+      value: 
+      objectReference: {fileID: 8300000, guid: f1e8de951378ceb44aecd7620b57b896, type: 3}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
       propertyPath: cameraOffset.y
       value: 1
       objectReference: {fileID: 0}
