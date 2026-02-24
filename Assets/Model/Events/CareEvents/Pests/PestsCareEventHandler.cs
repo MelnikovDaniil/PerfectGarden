@@ -15,9 +15,11 @@ public class PestsCareEventHandler : CareEventHandler
     public float cameraZoom = 6;
     public Vector3 cameraOffset;
     public AudioClip completeClip;
+    public float pulloutDelay = 0.5f;
 
     private LayerMask pestsMask;
     private bool pullingOutStarted = false;
+    private bool pullingOutInProcess = false;
 
     private PestsState state;
     private WormPincet pincetInstance;
@@ -54,6 +56,7 @@ public class PestsCareEventHandler : CareEventHandler
             _ = TutorialManager.Instance.SetTap(worm.gameObject, false, token);
         }
         pullingOutStarted = true;
+        pullingOutInProcess = false;
         while (state.wormNumberLeft > 0)
         {
             if (token.IsCancellationRequested)
@@ -71,22 +74,26 @@ public class PestsCareEventHandler : CareEventHandler
     {
         if (pullingOutStarted)
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (!pullingOutInProcess && Input.GetKeyDown(KeyCode.Mouse0))
             {
+                pullingOutInProcess = true;
                 var input = Input.mousePosition;
                 var ray = Camera.main.ScreenPointToRay(input);
                 var weedHitted = Physics.Raycast(ray, out var hit, float.PositiveInfinity, pestsMask);
 
+                Coroutine pullingOutRoutine = null;
                 if (weedHitted && hit.collider.TryGetComponent<Worm>(out var worm))
                 {
                     var isSuccess = worm.TryPullOut();
-                    StartCoroutine(PullingOutRoutine(worm.gameObject, isSuccess));
+                    pullingOutRoutine = StartCoroutine(PullingOutRoutine(worm.gameObject, isSuccess));
                 }
+
+                StartCoroutine(DelayAfterTryRoutine(pullingOutRoutine));
             }
         }
     }
 
-    public IEnumerator PullingOutRoutine(GameObject obj, bool isSuccess)
+    private IEnumerator PullingOutRoutine(GameObject obj, bool isSuccess)
     {
         yield return pincetInstance.GrabRoutine(obj, isSuccess);
         if (isSuccess)
@@ -94,6 +101,14 @@ public class PestsCareEventHandler : CareEventHandler
             state.PullOutWorm();
         }
     }
+
+    private IEnumerator DelayAfterTryRoutine(Coroutine pullingOutRoutine)
+    {
+        yield return pullingOutRoutine;
+        yield return new WaitForSeconds(pulloutDelay);
+        pullingOutInProcess = false;
+    }
+
 
     public override void Clear()
     {
