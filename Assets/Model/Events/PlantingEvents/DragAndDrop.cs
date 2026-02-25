@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class DragAndDrop : MonoBehaviour
 {
+    public event Action OnDrag;
     private Rigidbody _rigidbody;
     private Vector3 _mouseOffset;
     private Plane _dragPlane;
@@ -22,6 +24,7 @@ public class DragAndDrop : MonoBehaviour
     {
         if (isActive)
         {
+            OnDrag?.Invoke();
             // Create a plane at object position, aligned with camera forward direction
             _dragPlane = new Plane(Camera.main.transform.forward, transform.position);
 

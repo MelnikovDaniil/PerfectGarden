@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(DragAndDrop))]
@@ -11,6 +13,8 @@ public class ShakingSoil : MonoBehaviour
     public float stopThreshold = 0.1f;
     public float accelerationThreshold = 1f;
     public float reverseAngle = 10f;
+    public List<AudioClip> grabClips;
+    public List<AudioClip> shakeClips;
 
     private bool isShaking;
 
@@ -22,7 +26,6 @@ public class ShakingSoil : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _dragAndDrop = GetComponent<DragAndDrop>();
     }
 
     void Start()
@@ -44,6 +47,7 @@ public class ShakingSoil : MonoBehaviour
             {
                 targetAngle += reverseAngle * Mathf.Sign(currentVelocityY);
                 dirtParticles.Play();
+                SoundManager.PlaySound(shakeClips.GetRandom());
             }
 
             targetAngle = Mathf.Clamp(targetAngle, minAngle, maxAngle);
@@ -62,6 +66,7 @@ public class ShakingSoil : MonoBehaviour
         if (_dragAndDrop == null)
         {
             _dragAndDrop = GetComponent<DragAndDrop>();
+            _dragAndDrop.OnDrag += () => SoundManager.PlaySound(grabClips.GetRandom());
         }
         _dragAndDrop.enabled = true;
     }
@@ -72,6 +77,7 @@ public class ShakingSoil : MonoBehaviour
         if (_dragAndDrop == null)
         {
             _dragAndDrop = GetComponent<DragAndDrop>();
+            _dragAndDrop.OnDrag += () => SoundManager.PlaySound(grabClips.GetRandom());
         }
         _dragAndDrop.enabled = false;
     }
