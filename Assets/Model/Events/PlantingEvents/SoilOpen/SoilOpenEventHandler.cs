@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public class SoilOpenPlantingEvent : PlantEventHandler
     public RectTransform sliderCanvas;
     public Slider slider;
     public Animator soilOpenAnimator;
+    public AudioClip soilAppearanceClip;
 
     private bool isOpened;
     private float progress;
@@ -52,6 +54,7 @@ public class SoilOpenPlantingEvent : PlantEventHandler
         sliderCanvas.gameObject.SetActive(true);
         soilOpenAnimator.gameObject.SetActive(true);
         soilOpenAnimator.SetFloat("progress", 0);
+        SoundManager.PlaySound(soilAppearanceClip);
         await Task.Yield();
         await base.PrepareHandlingAsync();
     }
