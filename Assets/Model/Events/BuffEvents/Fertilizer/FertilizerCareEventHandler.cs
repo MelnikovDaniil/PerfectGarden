@@ -21,6 +21,7 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
 
         public int spraysAmount = 4;
         public Vector2 sprayDistanceRange = new Vector2(1f, 2f);
+        public Vector2 sprayOffset = new Vector2(0, 1);
         public HydrationSpray sprayPrefab;
 
         private GlassBottle glassBottleInstance;
@@ -157,7 +158,8 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
 
             sprayInstance.MoveSprayRelatively(
                 Context.PotWithPlant.plantRenderer.transform,
-                sprayInstance.GenerateSprayPosition(sprayDistanceRange));
+                sprayInstance.GenerateSprayPosition(sprayDistanceRange),
+                sprayOffset);
             sprayInstance.gameObject.SetActive(true);
             _ = TutorialManager.Instance.SetTap(sprayInstance.gameObject, false, token);
 
@@ -171,7 +173,7 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
                     if (Physics.Raycast(camRay, float.PositiveInfinity, sprayLayerMask))
                     {
                         currentSpraysAmount--;
-                        await sprayInstance.MakeSprayAsync(Context.PotWithPlant.plantRenderer.transform, sprayDistanceRange);
+                        await sprayInstance.MakeSprayAsync(Context.PotWithPlant.plantRenderer.transform, sprayDistanceRange, sprayOffset);
                     }
                 }
 
