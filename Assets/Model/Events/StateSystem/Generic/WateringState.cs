@@ -103,7 +103,7 @@ public class WateringState<TEvent> : State<TEvent>
 
     private IEnumerator PlaySoundRoutine()
     {
-        while (wateringProgress < 1)
+        while (wateringSound.Source != null && wateringProgress < 1)
         {
             if (soundPlayTimeLeft > 0)
             {
@@ -116,7 +116,10 @@ public class WateringState<TEvent> : State<TEvent>
             }
             yield return new WaitForEndOfFrame();
         }
-        wateringSound.Source.volume = 0;
+        if (wateringSound.Source != null)
+        {
+            wateringSound.Source.volume = 0;
+        }
         yield return null;
     }
 }

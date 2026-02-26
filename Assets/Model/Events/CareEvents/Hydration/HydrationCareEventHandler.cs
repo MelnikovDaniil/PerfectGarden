@@ -6,6 +6,7 @@ public class HydrationCareEventHandler : CareEventHandler
 {
     public int spraysAmount = 4;
     public Vector2 sprayDistanceRange = new Vector2(1f, 2f);
+    public Vector2 sprayOffset = new Vector2(0, 1);
     public HydrationSpray sprayPrefab;
 
     private HydrationSpray sprayInstance;
@@ -25,23 +26,24 @@ public class HydrationCareEventHandler : CareEventHandler
         sprayInstance.gameObject.layer = LayerMask.NameToLayer("Spray");
     }
 
-    protected override Task PrepareHandlingAsync(CancellationToken token = default)
+    protected override async Task PrepareHandlingAsync(CancellationToken token = default)
     {
         sprayInstance.transform.parent = Context.CarePlace;
         sprayInstance.transform.localScale = Vector3.one;
 
         isSpraying = false;
         currentSpraysAmount = spraysAmount;
-        sprayInstance.MoveSprayRelatively(Context.PotWithPlant.plantRenderer.transform, sprayInstance.GenerateSprayPosition(sprayDistanceRange));
+        sprayInstance.MoveSprayRelatively(Context.PotWithPlant.plantRenderer.transform, sprayInstance.GenerateSprayPosition(sprayDistanceRange), sprayOffset);
         sprayInstance.gameObject.SetActive(true);
-
-
-        return base.PrepareHandlingAsync(token);
+        var targetPosition = sprayInstance.transform.position;
+        sprayInstance.transform.localPosition += new Vector3(5 * Mathf.Sign(sprayInstance.transform.localPosition.x), 0, 0);
+        await MovementHelper.MoveObjectToTargetAsync(sprayInstance.transform, targetPosition, 1, true);
+        await MovementHelper.MoveObjectToBasePositionAsync(Context.PotWithPlant.transform, 1, true);
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
-        _ = TutorialManager.Instance.SetTap(sprayInstance.gameObject, false, token);
+        _ = TutorialManager.Instance.SetTap(sprayInstance.hintPlace.gameObject, false, token);
         isSpraying = true;
         var previousSpraysAmount = currentSpraysAmount;
         while (currentSpraysAmount > 0)
@@ -49,7 +51,7 @@ public class HydrationCareEventHandler : CareEventHandler
             if (currentSpraysAmount < previousSpraysAmount)
             {
                 previousSpraysAmount = currentSpraysAmount;
-                await sprayInstance.MakeSprayAsync(Context.PotWithPlant.plantRenderer.transform, sprayDistanceRange);
+                await sprayInstance.MakeSprayAsync(Context.PotWithPlant.plantRenderer.transform, sprayDistanceRange, sprayOffset);
             }
 
             if (token.IsCancellationRequested)
