@@ -11885,8 +11885,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6478582060498611381, guid: 2bb90405aefef53488b01ebcc261d512, type: 3}
     - target: {fileID: 3604842991790299363, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: completeClip
+      value: 
+      objectReference: {fileID: 8300000, guid: cb4fef590162f9b4890fbea83f345b3e, type: 3}
+    - target: {fileID: 3604842991790299363, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
       propertyPath: sprayOffset.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3604842991790299363, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: dustSplashPrefab
+      value: 
+      objectReference: {fileID: 3191131240579314258, guid: 41865beab3a1c2049ae4417eba2dd293, type: 3}
+    - target: {fileID: 3604842991790299363, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: dustSplashOffset.y
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 3604842991790299363, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
       propertyPath: sprayDistanceRange.x

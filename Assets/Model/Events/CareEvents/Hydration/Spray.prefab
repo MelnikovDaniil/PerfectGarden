@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4542643398407184901}
+  - component: {fileID: 2203663140832273050}
   m_Layer: 0
   m_Name: HintPlace
   m_TagString: Untagged
@@ -31,6 +32,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5171243111987038118}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &2203663140832273050
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3597344758595490623}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 3.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.48, z: 0}
 --- !u!1 &3648667485996892673
 GameObject:
   m_ObjectHideFlags: 0
@@ -132,6 +156,7 @@ GameObject:
   - component: {fileID: 6478582060498611381}
   - component: {fileID: 1524720757674553162}
   - component: {fileID: 3752824051993977675}
+  - component: {fileID: 7189851391179885248}
   m_Layer: 0
   m_Name: Spray
   m_TagString: Untagged
@@ -243,6 +268,25 @@ CapsuleCollider:
   m_Height: 3.5
   m_Direction: 1
   m_Center: {x: -0.6, y: -1.5, z: 0}
+--- !u!114 &7189851391179885248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4938577695475436002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e4eba045d06b624494bc39058bf38ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundGroups:
+  - groupName: Spray
+    audioClips:
+    - {fileID: 8300000, guid: f823079cae250c14ca8cd3e0d9b3afc0, type: 3}
+    - {fileID: 8300000, guid: de24fcd72b115594cb7c019a23729940, type: 3}
+    - {fileID: 8300000, guid: 0c4118c64d45c4e4094b703a74660121, type: 3}
+    - {fileID: 8300000, guid: 114af44c3d75b8e4da5c78e7e8085ef3, type: 3}
 --- !u!1 &6705439687801892014
 GameObject:
   m_ObjectHideFlags: 0
