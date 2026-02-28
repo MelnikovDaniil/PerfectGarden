@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 public class HydrationCareEventHandler : CareEventHandler
@@ -8,6 +9,7 @@ public class HydrationCareEventHandler : CareEventHandler
     public Vector2 sprayDistanceRange = new Vector2(1f, 2f);
     public Vector2 sprayOffset = new Vector2(0, 1);
     public HydrationSpray sprayPrefab;
+    public AudioClip completeClip;
 
     private HydrationSpray sprayInstance;
     private int currentSpraysAmount;
@@ -43,11 +45,12 @@ public class HydrationCareEventHandler : CareEventHandler
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
     {
-        _ = TutorialManager.Instance.SetTap(sprayInstance.hintPlace.gameObject, false, token);
         isSpraying = true;
         var previousSpraysAmount = currentSpraysAmount;
-        while (currentSpraysAmount > 0)
+        while (currentSpraysAmount > 0 || currentSpraysAmount != previousSpraysAmount)
         {
+            await Task.Yield();
+            await TutorialManager.Instance.SetTap(sprayInstance.hintPlace.gameObject, false, token);
             if (currentSpraysAmount < previousSpraysAmount)
             {
                 previousSpraysAmount = currentSpraysAmount;
@@ -59,8 +62,9 @@ public class HydrationCareEventHandler : CareEventHandler
                 await InterruptAsync();
                 return;
             }
-            await Task.Yield();
         }
+
+        SoundManager.PlaySound(completeClip);
     }
 
     private void Update()

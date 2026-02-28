@@ -7,6 +7,8 @@ public class HydrationScriptableStateInfo : ScriptableCareStateInfo
 
     public Material DustMaterial;
     public ParticleSystem DustParticlesPrefab;
+    public AudioClip dustSplashClip;
+    public ParticleSystem dustSplashPrefab;
     public Vector3 dustOffset = new Vector3(0, 0.2f, 0);
 
     public override State<CareEvent> CreateState()

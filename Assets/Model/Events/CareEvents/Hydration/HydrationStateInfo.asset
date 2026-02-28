@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DustMaterial: {fileID: 2100000, guid: 9bdc0ace7418d4d40954f35c7e6e8078, type: 2}
   DustParticlesPrefab: {fileID: 5450816155774467655, guid: b9266607643c418468bb4a13499fcc4b, type: 3}
+  dustSplashClip: {fileID: 8300000, guid: 2571d9b4699f04945bca9608e79b92fc, type: 3}
+  dustSplashPrefab: {fileID: 3191131240579314258, guid: 41865beab3a1c2049ae4417eba2dd293, type: 3}
+  dustOffset: {x: 0, y: 0.2, z: 0}
