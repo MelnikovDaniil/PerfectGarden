@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
@@ -8,13 +9,19 @@ public class SoilOpenPlantingEvent : PlantEventHandler
 {
     public override PlantingEvent EventName => PlantingEvent.SoilOpen;
 
+    public int numberOfLevels = 5;
     public RectTransform sliderCanvas;
     public Slider slider;
+    public Animator scissorsAnimator;
     public Animator soilOpenAnimator;
+    public Transform soilBag;
     public AudioClip soilAppearanceClip;
+    public List<AudioClip> scissorsClips;
 
     private bool isOpened;
     private float progress;
+    private float levelStep;
+    private int lastLevelArchive;
 
     private void Awake()
     {
@@ -25,6 +32,7 @@ public class SoilOpenPlantingEvent : PlantEventHandler
     {
         Clear();
         soilOpenAnimator.speed = 0;
+        levelStep = 1.0f / numberOfLevels;
     }
 
     private void Update()
@@ -37,6 +45,7 @@ public class SoilOpenPlantingEvent : PlantEventHandler
                 {
                     progress = 0;
                     slider.value = 0;
+                    lastLevelArchive = -1;
                 }
                 else
                 {
@@ -51,12 +60,16 @@ public class SoilOpenPlantingEvent : PlantEventHandler
         isOpened = false;
         progress = 0;
         slider.value = 0;
-        sliderCanvas.gameObject.SetActive(true);
+        lastLevelArchive = -1;
+        sliderCanvas.gameObject.SetActive(false);
         soilOpenAnimator.gameObject.SetActive(true);
         soilOpenAnimator.SetFloat("progress", 0);
         SoundManager.PlaySound(soilAppearanceClip);
         await Task.Yield();
         await base.PrepareHandlingAsync();
+        soilBag.localPosition = new Vector3(0, -12, 0);
+        await MovementHelper.MoveObjectToBasePositionAsync(soilBag, 0.5f, true);
+        sliderCanvas.gameObject.SetActive(true);
     }
 
     protected override async Task StartHandlingAsync(CancellationToken token = default)
@@ -67,13 +80,15 @@ public class SoilOpenPlantingEvent : PlantEventHandler
             await Task.Yield();
         }
 
-        await Task.CompletedTask;
+        sliderCanvas.gameObject.SetActive(false);
+        await MovementHelper.MoveObjectAwayAsync(soilBag, Vector3.up, 0.5f, true);
     }
 
     public override void Clear()
     {
         isOpened = false;
         slider.value = 0;
+        lastLevelArchive = 0;
         sliderCanvas.gameObject.SetActive(false);
         soilOpenAnimator.gameObject.SetActive(false);
         soilOpenAnimator.SetFloat("progress", 0);
@@ -84,6 +99,15 @@ public class SoilOpenPlantingEvent : PlantEventHandler
         if (value > progress)
         {
             progress = value;
+            var currentLevelProcess =  value / levelStep;
+            var animationTime = currentLevelProcess % 1;
+            var currentLevel = (int)currentLevelProcess;
+            if (currentLevel > lastLevelArchive)
+            {
+                lastLevelArchive = currentLevel;
+                SoundManager.PlaySound(scissorsClips.GetRandom());
+            }
+            scissorsAnimator.SetFloat("progress", animationTime);
         }
         else
         {
