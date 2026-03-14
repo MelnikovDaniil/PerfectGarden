@@ -12,6 +12,11 @@ public class GlassBottle : MonoBehaviour
     public Vector3 waterSurfacePosition = new Vector3(0, -0.13f, 0);
     public Transform tipSurface;
     public Transform tip;
+    public AudioClip closingClip;
+    public AudioClip LevelGreatClip;
+    public AudioClip LevelGoodClip;
+    public AudioClip LevelTryAgainClip;
+    public List<AudioClip> shakeClips;
 
     [Header("Settings")]
     public float maxFillLevel = 1.0f;
@@ -79,6 +84,7 @@ public class GlassBottle : MonoBehaviour
 
     public async Task CloseCapAsync()
     {
+        SoundManager.PlaySound(closingClip);
         await AnimatorHelper.PlayAnimationForTheEndAsync(_animator, "Glass_Close");
         tip.gameObject.SetActive(false);
     }
@@ -116,14 +122,17 @@ public class GlassBottle : MonoBehaviour
     {
         if (Mathf.Abs(currentLevel - targetLevel) < tolerance)
         {
+            SoundManager.PlaySound(LevelGreatClip);
             return GlassBottleLevel.Great;
         }
         else if (Mathf.Abs(currentLevel - targetLevel) < 2 * tolerance)
         {
+            SoundManager.PlaySound(LevelGoodClip);
             return GlassBottleLevel.Good;
         }
         else
         {
+            SoundManager.PlaySound(LevelTryAgainClip);
             return GlassBottleLevel.TryAgain;
         }
     }
@@ -163,6 +172,7 @@ public class GlassBottle : MonoBehaviour
     {
         // implement
         shakingProgress += 1f / requiredShakeNumber;
+        SoundManager.PlaySound(shakeClips.GetRandom());
         var targetColor = MixColors(saves.Select(waterSurface => waterSurface.color));
         foreach (var surface in saves)
         {

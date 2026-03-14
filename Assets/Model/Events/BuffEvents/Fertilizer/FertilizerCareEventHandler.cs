@@ -12,6 +12,7 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
         public LevelEstimationText levelEstimationTextPrefab;
         public GlassBottle glassBottlePrefab;
         public Bucket bucketPrefab;
+        public ParticleSystem completeParticlesPrefab;
 
         [Header("Settings")]
         public MinMaxGradient fertilizerColorSet;
@@ -27,6 +28,7 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
         private GlassBottle glassBottleInstance;
         private Bucket bucketInstance;
         private LevelEstimationText levelEstimationTextInstance;
+        private ParticleSystem completeParticles;
 
         private HydrationSpray sprayInstance;
         private int currentSpraysAmount;
@@ -48,12 +50,19 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
             sprayInstance.gameObject.SetActive(false);
             sprayInstance.gameObject.layer = LayerMask.NameToLayer("Spray");
 
+            completeParticles = GameObject.Instantiate(completeParticlesPrefab);
+            completeParticles.gameObject.SetActive(false);
+
             bucketInstance.OnWatering += glassBottleInstance.UpdateWaterLevel;
         }
 
         protected override async Task PrepareHandlingAsync(CancellationToken token = default)
         {
             // Get rid of Plant
+            completeParticles.transform.parent = Context.PotWithPlant.dirtCollider.transform;
+            completeParticles.transform.localScale = Vector3.one;
+            completeParticles.transform.localPosition = Vector3.zero;
+            PlantRotationManager.Instance.SetRotationEnabled(false);
             await MovementHelper.MoveObjectAwayAsync(Context.PotWithPlant.transform, Vector3.down, 1f, true);
 
             // Set bottle to beginning state
@@ -185,6 +194,7 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
                 await Task.Yield();
             }
 
+            completeParticles.gameObject.SetActive(true);
             sprayInstance.gameObject.SetActive(false);
         }
 
@@ -198,13 +208,14 @@ namespace Assets.Model.Events.CareEvents.Fertilizer
         {
             // Hide bottle
             // Return Plant to base state
+            PlantRotationManager.Instance.SetRotationEnabled(true);
             bucketInstance.gameObject.SetActive(false);
             levelEstimationTextInstance.gameObject.SetActive(false);
             glassBottleInstance.gameObject.SetActive(false);
             glassBottleInstance.Clear();
             sprayInstance.gameObject.SetActive(false);
 
-            StartCoroutine(MovementHelper.MoveObjectAwayRoutine(Context.PotWithPlant.transform,Vector3.up, 1f, true));
+            //StartCoroutine(MovementHelper.MoveObjectAwayRoutine(Context.PotWithPlant.transform,Vector3.up, 1f, true));
         }
     }
 }

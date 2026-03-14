@@ -40,8 +40,8 @@ public class PestsCareEventHandler : CareEventHandler
         state = Context.PotWithPlant.GetState<PestsState>();
         pincetInstance.gameObject.SetActive(true);
         pincetInstance.transform.parent = Context.PotWithPlant.transform;
-        pincetInstance.transform.localPosition = Vector2.up * 0.28f;
-        pincetInstance.transform.localScale = Vector2.one;
+        pincetInstance.transform.localPosition = Vector3.up * 0.28f;
+        pincetInstance.transform.localScale = Vector3.one;
         CameraManager.Instanse.LookAtPoint(state.GetGroupPosition(), cameraZoom, cameraOffset);
         return Task.CompletedTask;
     }
