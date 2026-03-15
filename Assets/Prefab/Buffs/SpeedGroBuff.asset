@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16a82b7767aaee3449d143822eab3768, type: 3}
   m_Name: SpeedGroBuff
   m_EditorClassIdentifier: 
-  particles: {fileID: 5450816155774467655, guid: 7d9206312a9c8da4ea0a896de755285d, type: 3}
+  particles: {fileID: 4582585554886327702, guid: 316f92f74f95c4f4fb9cb28f0bee95cf, type: 3}
   particlesOffset: {x: 0, y: 0.2, z: 0}
   timeReductionCoef: 0.5

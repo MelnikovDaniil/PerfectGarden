@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bucket : MonoBehaviour
@@ -7,7 +8,12 @@ public class Bucket : MonoBehaviour
     public Action OnBucketUp;
     public float pouringSpeed = 1.0f;
     public float rotationSpeed = 5.0f;
+    public ParticleSystem waterParticles;
+    public ParticleSystem splashParticles;
+    public AudioClip wateringClip;
+    public List<AudioClip> grabCanClips;
 
+    private SMSound existingInstanceSound;
     private bool isPouring = false;
     private Quaternion initialRotation;
     private Quaternion pouringRotation;
@@ -48,6 +54,10 @@ public class Bucket : MonoBehaviour
         if (ableToInteract)
         {
             isPouring = true;
+            SoundManager.PlaySound(grabCanClips.GetRandom());
+            existingInstanceSound = SoundManager.PlaySound(wateringClip);
+            existingInstanceSound.SetLooped(true);
+            waterParticles.Play();
         }
     }
 
@@ -57,11 +67,16 @@ public class Bucket : MonoBehaviour
         {
             OnBucketUp?.Invoke();
             isPouring = false;
+            existingInstanceSound.SetLooped(false);
+            existingInstanceSound.Stop();
+            waterParticles.Stop();
         }
     }
 
     public void SetColor(Color color)
     {
+        var particleMain = waterParticles.main;
+        particleMain.startColor = color;
         var renderer = GetComponentInChildren<Renderer>();
         var material = new Material(renderer.material)
         {

@@ -56,6 +56,20 @@ MonoBehaviour:
   waterSurfacePosition: {x: 0, y: -0.13, z: 0}
   tipSurface: {fileID: 2385706890972734583}
   tip: {fileID: 8596248564468071411}
+  closingClip: {fileID: 8300000, guid: bc7022967cd43844e91e229082f9a283, type: 3}
+  LevelGreatClip: {fileID: 8300000, guid: 85f9a0adaac8abe40900e69b831645a0, type: 3}
+  LevelGoodClip: {fileID: 8300000, guid: 85f9a0adaac8abe40900e69b831645a0, type: 3}
+  LevelTryAgainClip: {fileID: 8300000, guid: 0bc6eea660a39b448be91e18cabd7495, type: 3}
+  shakeClips:
+  - {fileID: 8300000, guid: e128556e5629bdb4b80e52b18dc2e2a7, type: 3}
+  - {fileID: 8300000, guid: 89522ef3a034b0e4f850e5be6730e6da, type: 3}
+  - {fileID: 8300000, guid: 19b717e3f8c1ccb4d960dcd6cb9da1b1, type: 3}
+  - {fileID: 8300000, guid: e067b4fc00147264f9223ff147ea9be9, type: 3}
+  - {fileID: 8300000, guid: 4f38b669d8a18824eb5840b8fd2f3ec6, type: 3}
+  - {fileID: 8300000, guid: e592a29c4da54624c80fca9c13fde59b, type: 3}
+  - {fileID: 8300000, guid: 156493a3f7c649146b21540f28ae6f44, type: 3}
+  - {fileID: 8300000, guid: 540786bc3526b1c47a898f58ad4c7569, type: 3}
+  - {fileID: 8300000, guid: 630c09bba3f2f274c9217994ac0fd221, type: 3}
   maxFillLevel: 1
   targetLevelRange: {x: 0.3, y: 0.8}
   tolerance: 0.1

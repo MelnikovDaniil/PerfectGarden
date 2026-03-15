@@ -12229,6 +12229,7 @@ MonoBehaviour:
   levelEstimationTextPrefab: {fileID: 1976800968953384183, guid: 217a7dd1bf02828439bd30a22eee6d54, type: 3}
   glassBottlePrefab: {fileID: -7307172786409177417, guid: aee31252c030af5438ddfc61b41e5531, type: 3}
   bucketPrefab: {fileID: 6418762063991312261, guid: 0f2ed7ca81e00454890481f2ce49f8e9, type: 3}
+  completeParticlesPrefab: {fileID: 9144439289764392788, guid: f8c063ab7f0217849b71a876eff721ca, type: 3}
   fertilizerColorSet:
     m_Mode: 4
     m_GradientMin:
@@ -14671,7 +14672,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0
   far clip plane: 1000
   field of view: 35.3
   orthographic: 1

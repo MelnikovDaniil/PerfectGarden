@@ -14,10 +14,17 @@ public class WormPincet : MonoBehaviour
     public List<AudioClip> pincetFailedClips;
 
     private Vector3 startPosition;
+    private Animator animator;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     public IEnumerator GrabRoutine(GameObject obj, bool seccessfuly)
     {
         startPosition = transform.position;
+        animator.SetTrigger("grab");
         yield return MovementHelper.MoveObjectToTargetRoutine(transform, obj.transform.position, grabTime, false);
         SoundManager.PlaySound(pincetClip);
 
@@ -27,6 +34,8 @@ public class WormPincet : MonoBehaviour
             yield return MovementHelper.ShakeRoutine(transform, successfulGrabMagnitude, successfulGrabDelay);
             obj.transform.parent = transform;
             SoundManager.PlaySound(warmExtractionClip);
+            yield return MovementHelper.MoveObjectToTargetRoutine(transform, startPosition + Vector3.up*2, grabTime, true);
+            obj.transform.parent = null;
             Destroy(obj, 1);
         }
         else
@@ -34,6 +43,7 @@ public class WormPincet : MonoBehaviour
             SoundManager.PlaySound(pincetFailedClips.GetRandom());
         }
 
+        animator.SetTrigger("release");
         yield return MovementHelper.MoveObjectToTargetRoutine(transform, startPosition, grabTime, true);
     }
 }
