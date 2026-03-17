@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -18,13 +19,22 @@ public class CareMenu : MonoBehaviour
     public GameObject canvas;
     public Button BackButton;
 
+    [Header("Buff buttons")]
+    [Range(0, 360)] 
+    public float arcAngle = 180f;
+    public float radius = 100f;
+    public float startOffset = -90f;
+    public bool addEdgeSpacing = true;
+    public int edgeCount = 2;
+    public float timeBetweenButtons = 0.2f;
+
     private bool isLocked;
 
     private void Awake()
     {
         canvas.SetActive(false);
         careButtons.ForEach(x => x.gameObject.SetActive(false));
-        RewardManager.Instance.OnTextUpdate += () => { currencyText.text = MoneyMapper.Money + "$"; };
+        RewardManager.Instance.OnTextUpdate += () => { currencyText.text = MoneyMapper.Money.ToString(); };
     }
 
     private void Start()
@@ -39,7 +49,7 @@ public class CareMenu : MonoBehaviour
         {
             isLocked = false;
             canvas.SetActive(true);
-            currencyText.text = MoneyMapper.Money + "$";
+            currencyText.text = MoneyMapper.Money.ToString();
             BackButton.gameObject.SetActive(true);
             HideAllButtons();
 
@@ -58,11 +68,9 @@ public class CareMenu : MonoBehaviour
 
                 if (plant.waitingCareEvents.Any())
                 {
-                    var careButtonsToEnable = careButtons.Where(x => plant.waitingCareEvents.Contains(x.eventName));
-                    foreach (var careButton in careButtonsToEnable)
-                    {
-                        careButton.gameObject.SetActive(true);
-                    }
+                    var careButtonsToEnable = careButtons.Where(x => plant.waitingCareEvents.Contains(x.eventName)).ToList();
+                    PlaceButtonsAround(careButtonsToEnable);
+                    StartCoroutine(ButtonsEnablingRoutin(careButtonsToEnable));
                 }
                 else
                 {
@@ -77,7 +85,7 @@ public class CareMenu : MonoBehaviour
             else
             {
                 purchaseButton.gameObject.SetActive(true);
-                priceText.text = plant.plantInfo.plantPrice.ToString();
+                priceText.text = "<sprite name=\"coin\"> " + plant.plantInfo.plantPrice.ToString();
                 purchaseButton.onClick.RemoveAllListeners();
                 purchaseButton.onClick.AddListener(async () =>
                 {
@@ -105,5 +113,33 @@ public class CareMenu : MonoBehaviour
         purchaseButton.gameObject.SetActive(false);
         careButtons.ForEach(x => x.gameObject.SetActive(false));
         buffButtons.ForEach(x => x.gameObject.SetActive(false));
+    }
+
+    private IEnumerator ButtonsEnablingRoutin(List<CareButton> buttons)
+    {
+        buttons.Reverse();
+        foreach (var careButton in buttons)
+        {
+            careButton.gameObject.SetActive(true);
+            yield return new WaitForSeconds(timeBetweenButtons);
+        }
+    }
+
+    private void PlaceButtonsAround(List<CareButton> buttons)
+    {
+        var count = buttons.Count;
+        float step = arcAngle / (count + 1);
+        float startAngle = -arcAngle / 2 + step + startOffset;
+
+        for (int i = 0; i < count; i++)
+        {
+            float angle = startAngle + step * i;
+            float rad = angle * Mathf.Deg2Rad;
+
+            buttons[i].rectTransform.anchoredPosition = new Vector2(
+                Mathf.Cos(rad) * radius,
+                Mathf.Sin(rad) * radius
+            );
+        }
     }
 }

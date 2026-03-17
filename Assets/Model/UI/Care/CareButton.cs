@@ -7,9 +7,12 @@ using UnityEngine.UI;
 public class CareButton : MonoBehaviour
 {
     public CareEvent eventName;
+    [NonSerialized]
+    public RectTransform rectTransform;
 
     private void Awake()
     {
+        rectTransform = GetComponent<RectTransform>();
         GetComponent<Button>().onClick.AddListener(async () => await CareManager.Instance.StartCareAsync(eventName));
     }
 }
