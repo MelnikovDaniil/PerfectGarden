@@ -103,9 +103,12 @@ public class MenuManager : MonoBehaviour
         while (!token.IsCancellationRequested)
         {
             await Task.Delay(1000 * stateCheckIntervalSec);
-            CareManager.Instance.GenerateCare(GardernManager.Instance.growingPlants);
-            CareManager.Instance.UpdateMenu();
-            GardernManager.Instance.UpdateMenu();
+            if (!token.IsCancellationRequested)
+            {
+                CareManager.Instance.GenerateCare(GardernManager.Instance.growingPlants);
+                CareManager.Instance.UpdateMenu();
+                GardernManager.Instance.UpdateMenu();
+            }
         }
     }
 

@@ -50,7 +50,7 @@ public class SelectionMenu : MonoBehaviour
         seedSlectionCanvas.gameObject.SetActive(false);
         moreInforCanvas.gameObject.SetActive(true);
         informationCard.OnTake = () => OnProductSelection(productInfo);
-        informationCard.OnPurchase += () => Purchase(productInfo);
+        informationCard.OnPurchase = () => Purchase(productInfo);
         informationCard.ShowCard(productInfo);
     }
 
@@ -71,7 +71,7 @@ public class SelectionMenu : MonoBehaviour
 
     private void Purchase(ProductInfo productInfo)
     {
-        if (MoneyMapper.Money > productInfo.Price)
+        if (MoneyMapper.Money >= productInfo.Price)
         {
             MoneyMapper.Money -= productInfo.Price;
             ProductMapper.Add(productInfo.Name);

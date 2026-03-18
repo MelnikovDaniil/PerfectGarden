@@ -36,7 +36,7 @@ public class ProductMiniCard : MonoBehaviour
         }
         else if (productInfo.IsUnlocked || productInfo.IsPartiallyVisible)
         {
-            takeButtonText.text = productInfo.Price.ToString();
+            takeButtonText.text = "<sprite name=\"coin\"> " + productInfo.Price.ToString();
             takeButton.onClick.AddListener(() => OnPurchase?.Invoke());
             if (!productInfo.IsUnlocked)
             {
