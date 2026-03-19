@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEditor.U2D.ScriptablePacker;
-using static UnityEngine.ParticleSystem;
 using Random = UnityEngine.Random;
 
 public class CareManager : MonoBehaviour

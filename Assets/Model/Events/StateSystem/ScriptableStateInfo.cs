@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public abstract class ScriptableStateInfo<TEvent> : ScriptableObject
