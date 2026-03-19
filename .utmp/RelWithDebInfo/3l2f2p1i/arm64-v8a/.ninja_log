@@ -1,0 +1,12 @@
+# ninja log v5
+84	673	7956632615873442	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	524eb8f64e59901e
+675	772	7956632616753466	F:/Progects/Perfect Garden 3D/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/3l2f2p1i/obj/arm64-v8a/libswappywrapper.so	6759c5d5347520d8
+0	1032	7956632619463443	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	33571b124dd0943b
+7	1085	7956632619983427	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	e55cdc666cc93ec7
+24	1111	7956632620253471	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	95de8c653f00c3a4
+18	1112	7956632620263452	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	2071f38a04097573
+39	1174	7956632620903430	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	f937c2674020ac79
+30	1314	7956632622313565	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	c0745cc58f6755d5
+64	1346	7956632622642370	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	d381d002651d838a
+13	1401	7956632623173860	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	ea0b6c3e1dcd4a86
+1401	1450	7956632623709859	F:/Progects/Perfect Garden 3D/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/3l2f2p1i/obj/arm64-v8a/libgame.so	b4df3e0e522d6385
