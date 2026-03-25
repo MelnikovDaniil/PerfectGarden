@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -6,6 +7,7 @@ using UnityEngine.UI;
 
 public class PlantsStatusUI : MonoBehaviour
 {
+    public static PlantsStatusUI Instance;
     public Canvas canvas;
     public Image iconPrefab;
     public Vector3 offset;
@@ -19,6 +21,7 @@ public class PlantsStatusUI : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         GardernManager.OnGardenOpen += ShowIcons;
         GardernManager.OnGardenClose += HideIcons;
     }
@@ -29,8 +32,14 @@ public class PlantsStatusUI : MonoBehaviour
         ShowIcons();
     }
 
-    private void ShowIcons()
+    public void ShowIcons()
     {
+        StartCoroutine(ShowIconsRoutine());
+    }
+
+    private IEnumerator ShowIconsRoutine()
+    {
+        yield return new WaitForEndOfFrame();
         canvas.gameObject.SetActive(true);
         iconsPool.ForEach(x => x.gameObject.SetActive(false));
         foreach (var plant in plants)

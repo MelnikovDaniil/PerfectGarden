@@ -6425,6 +6425,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PotWithPlant (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 139431234288051957, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2614493521235745922, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -6529,6 +6533,10 @@ PrefabInstance:
     - target: {fileID: 139431234288051957, guid: 746b640df76e2b145ae1dd3b836ffb64, type: 3}
       propertyPath: m_Name
       value: CommonPot1
+      objectReference: {fileID: 0}
+    - target: {fileID: 139431234288051957, guid: 746b640df76e2b145ae1dd3b836ffb64, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2641384167048222160, guid: 746b640df76e2b145ae1dd3b836ffb64, type: 3}
       propertyPath: m_LocalScale.x
@@ -11356,7 +11364,7 @@ RectTransform:
   m_GameObject: {fileID: 1035099739}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1577942591}
@@ -12155,7 +12163,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1275000133
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12505,6 +12513,10 @@ PrefabInstance:
     - target: {fileID: 139431234288051957, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
       propertyPath: m_Name
       value: PotWithPlant (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 139431234288051957, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2614493521235745922, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
       propertyPath: m_Layer
@@ -12995,6 +13007,10 @@ PrefabInstance:
       propertyPath: completeClip
       value: 
       objectReference: {fileID: 8300000, guid: f1e8de951378ceb44aecd7620b57b896, type: 3}
+    - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
+      propertyPath: pullThreshold
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 365809751439157945, guid: b71a2791fe5d5244281d19ac0991cd61, type: 3}
       propertyPath: cameraOffset.y
       value: 1
@@ -13507,7 +13523,7 @@ MonoBehaviour:
   iconPrefab: {fileID: 766791306435766690, guid: dd5aaf8dceedce04e93fc303f5bb689e, type: 3}
   offset: {x: 0.2, y: 0.3, z: 0}
   iconSize: 40
-  needsCareSprite: {fileID: -1864336081, guid: 8583b664d0dd62e4ca09cd746ddfa23d, type: 3}
+  needsCareSprite: {fileID: 21300000, guid: 0accaa29f0e95854d82cddc39ca86a46, type: 3}
   deadSprite: {fileID: -894446158, guid: 8583b664d0dd62e4ca09cd746ddfa23d, type: 3}
 --- !u!114 &1505290239
 MonoBehaviour:
@@ -13521,7 +13537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7560846dcc86c44b99e32e007271d10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stateCheckIntervalSec: 60
+  stateCheckIntervalSec: 15
   GardenCanvas: {fileID: 685593622}
   OrderCanvas: {fileID: 979820505}
   notification: {fileID: 982077751}
@@ -13659,7 +13675,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1522154634}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 287b339e8eb68f84ca5f6c36b35067eb, type: 3}
   m_Name: 
@@ -16002,6 +16018,10 @@ PrefabInstance:
     - target: {fileID: 139431234288051957, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
       propertyPath: m_Name
       value: PotWithPlant
+      objectReference: {fileID: 0}
+    - target: {fileID: 139431234288051957, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2614493521235745922, guid: 1d2a818dbcaad3649891f75df89dcc2a, type: 3}
       propertyPath: m_Layer
@@ -25272,7 +25292,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &8835028468821659747
 MonoBehaviour:
   m_ObjectHideFlags: 0

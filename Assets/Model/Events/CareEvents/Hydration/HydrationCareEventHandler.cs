@@ -47,6 +47,8 @@ public class HydrationCareEventHandler : CareEventHandler
     {
         isSpraying = true;
         var previousSpraysAmount = currentSpraysAmount;
+        // Current spray should be more that 0
+        // when it more than zero and current sprat
         while (currentSpraysAmount > 0 || currentSpraysAmount != previousSpraysAmount)
         {
             await Task.Yield();
